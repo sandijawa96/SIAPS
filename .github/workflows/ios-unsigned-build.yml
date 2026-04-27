@@ -71,7 +71,11 @@ jobs:
           grep -n -A1 "MinimumOSVersion" ios/Flutter/AppFrameworkInfo.plist
 
           echo "Firebase plugin podspec target:"
-          grep -n "deployment_target" ios/.symlinks/plugins/firebase_core/ios/firebase_core.podspec
+          if [ -f ios/.symlinks/plugins/firebase_core/ios/firebase_core.podspec ]; then
+            grep -n "deployment_target" ios/.symlinks/plugins/firebase_core/ios/firebase_core.podspec
+          else
+            echo "::warning::firebase_core podspec belum tersedia sebelum pod install"
+          fi
 
           if ! grep -q "platform :ios, '15.0'" ios/Podfile; then
             echo "::error::ios/Podfile tidak memakai platform iOS 15.0"
