@@ -92,7 +92,23 @@ jobs:
           pod --version
           rm -rf ios/Pods ios/Podfile.lock
           cd ios
-          pod install --repo-update
+          set +e
+          pod install --repo-update 2>&1 | tee ../pod-install.log
+          pod_status=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$pod_status" -ne 0 ]; then
+            echo "CocoaPods failure excerpt:"
+            tail -n 120 ../pod-install.log || true
+
+            grep -E "^\[!\]|required a higher minimum|In Podfile|Specs satisfying|firebase|Firebase|Error" ../pod-install.log \
+              | tail -n 30 \
+              | while IFS= read -r line; do
+                  echo "::error title=CocoaPods::$line"
+                done
+
+            exit "$pod_status"
+          fi
 
       - name: Restore Firebase iOS config
         run: |
