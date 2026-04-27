@@ -44,6 +44,12 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
+      - name: Show build context
+        run: |
+          echo "Git commit: $GITHUB_SHA"
+          grep -n "platform :ios" ios/Podfile
+          grep -n "IPHONEOS_DEPLOYMENT_TARGET" ios/Runner.xcodeproj/project.pbxproj | head
+
       - name: Install Flutter dependencies
         run: flutter pub get
 
