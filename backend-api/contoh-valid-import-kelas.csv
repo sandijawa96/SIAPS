@@ -1,0 +1,30 @@
+// Validation errors
+        throw {
+          message: data.message || 'Data tidak valid',
+          response: error.response
+        };
+=======
+      if (status === 422) {
+        // Validation errors
+        const errorMsg = data.message || 'Data tidak valid';
+        const summary = data.summary || {};
+        const detailErrors = data.errors || [];
+        
+        let fullMessage = `${errorMsg}\n\n`;
+        if (summary.total_processed === 0) {
+          fullMessage += 'Tidak ada data yang dapat diproses. Pastikan:\n';
+          fullMessage += '- Menggunakan template yang benar\n';
+          fullMessage += '- Data dimulai dari baris ke-5\n';
+          fullMessage += '- Format data sesuai (Tingkat, Tahun Ajaran, Status)\n';
+          fullMessage += '- Wali Kelas menggunakan Nama/NIP yang valid\n';
+        }
+        
+        if (detailErrors.length > 0) {
+          fullMessage += '\nDetail error:\n';
+          fullMessage += detailErrors.join('\n');
+        }
+        
+        throw {
+          message: fullMessage,
+          response: error.response
+        };

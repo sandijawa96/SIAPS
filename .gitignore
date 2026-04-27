@@ -1,0 +1,77 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+backend-api/.env
+backend-api/.env.*
+!backend-api/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+mobileapp/ios/Runner/GoogleService-Info.plist
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+mobileapp/node_modules/
+backend-api/vendor/
+
+# Build output
+**/build/
+build/
+dist/
+frontend/build/
+frontend/dist/
+mobileapp/build/
+backend-api/public/build/
+
+# Laravel runtime files
+backend-api/storage/logs/*.log
+backend-api/storage/framework/cache/*
+backend-api/storage/framework/sessions/*
+backend-api/storage/framework/views/*
+backend-api/bootstrap/cache/*.php
+
+# Flutter/Dart generated files
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+mobileapp/ios/Flutter/Generated.xcconfig
+mobileapp/ios/Flutter/flutter_export_environment.sh
+mobileapp/ios/Pods/
+mobileapp/ios/.symlinks/
+mobileapp/android/.gradle/
+sbt-smanis/ios/Pods/
+sbt-smanis/ios/.symlinks/
+sbt-smanis/android/.gradle/
+
+# Mobile signing and packaged apps
+*.apk
+*.aab
+*.ipa
+*.xcarchive
+*.keystore
+*.jks
+key.properties
+local.properties
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local archives, dumps, and generated packages
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+*.sql
+main-amd64
+stderr.txt
+stdout.txt
+
+# Local generated helpers
+ios-ksign-github-files.zip

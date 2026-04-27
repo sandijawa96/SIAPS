@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Absensi API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 3px; white-space: pre-wrap; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Absensi API</h1>
+        
+        <div class="section">
+            <h3>1. Login untuk mendapatkan token</h3>
+            <input type="email" id="email" placeholder="Email" value="admin@example.com">
+            <input type="password" id="password" placeholder="Password" value="password">
+            <button onclick="login()">Login</button>
+            <div id="loginResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h3>2. Test Check-in Absensi</h3>
+            <input type="text" id="token" placeholder="Token dari login">
+            <input type="number" id="latitude" placeholder="Latitude" value="-6.200000" step="any">
+            <input type="number" id="longitude" placeholder="Longitude" value="106.816666" step="any">
+            <textarea id="foto_checkin" placeholder="Base64 foto (opsional)">data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=</textarea>
+            <textarea id="keterangan" placeholder="Keterangan (opsional)">Check-in dari test</textarea>
+            <button onclick="checkIn()">Check-in</button>
+            <div id="checkinResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h3>3. Test Status Hari Ini</h3>
+            <button onclick="todayStatus()">Cek Status Hari Ini</button>
+            <div id="statusResult" class="result"></div>
+        </div>
+
+        <div class="section">
+            <h3>4. Test Check-out Absensi</h3>
+            <button onclick="checkOut()">Check-out</button>
+            <div id="checkoutResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        let authToken = '';
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const result = await response.json();
+                document.getElementById('loginResult').textContent = JSON.stringify(result, null, 2);
+                
+                if (result.success && result.data && result.data.token) {
+                    authToken = result.data.token;
+                    document.getElementById('token').value = authToken;
+                }
+            } catch (error) {
+                document.getElementById('loginResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function checkIn() {
+            const token = document.getElementById('token').value || authToken;
+            const latitude = parseFloat(document.getElementById('latitude').value);
+            const longitude = parseFloat(document.getElementById('longitude').value);
+            const foto = document.getElementById('foto_checkin').value;
+            const keterangan = document.getElementById('keterangan').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/simple-attendance/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        jenis_absensi: 'masuk',
+                        latitude,
+                        longitude,
+                        foto,
+                        keterangan
+                    })
+                });
+                
+                const result = await response.json();
+                document.getElementById('checkinResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('checkinResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function todayStatus() {
+            const token = document.getElementById('token').value || authToken;
+            
+            try {
+                const response = await fetch(`${API_BASE}/absensi/today`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const result = await response.json();
+                document.getElementById('statusResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('statusResult').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function checkOut() {
+            const token = document.getElementById('token').value || authToken;
+            const latitude = parseFloat(document.getElementById('latitude').value);
+            const longitude = parseFloat(document.getElementById('longitude').value);
+            const foto = document.getElementById('foto_checkin').value; // Menggunakan foto yang sama
+            const keterangan = 'Check-out dari test';
+            
+            try {
+                const response = await fetch(`${API_BASE}/simple-attendance/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        jenis_absensi: 'pulang',
+                        latitude,
+                        longitude,
+                        foto,
+                        keterangan
+                    })
+                });
+                
+                const result = await response.json();
+                document.getElementById('checkoutResult').textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('checkoutResult').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+LAPORAN BACKUP MIGRASI LAMA
+Tanggal: 2025-06-17 15:28:16
+Folder Backup: migrations_backup_2025_06_17_15_28_16
+
+FILE YANG BERHASIL DIBACKUP (0):
+
+FILE YANG TIDAK DITEMUKAN (42):
+✗ 0001_01_01_000001_create_cache_table.php
+✗ 0001_01_01_000002_create_jobs_table.php
+✗ 2024_01_01_000001_create_users_table.php
+✗ 2024_01_01_000002_create_kelas_table.php
+✗ 2024_01_01_000003_create_tahun_ajaran_table.php
+✗ 2024_01_01_000004_create_lokasi_gps_table.php
+✗ 2024_01_01_000005_create_absensi_table.php
+✗ 2024_01_01_000006_create_izin_table.php
+✗ 2024_01_01_000007_create_kalender_akademik_table.php
+✗ 2024_01_01_000008_create_whatsapp_notifications_table.php
+✗ 2024_01_01_000009_create_qr_codes_table.php
+✗ 2024_01_01_000010_create_settings_table.php
+✗ 2024_01_01_000011_create_activity_logs_table.php
+✗ 2024_01_01_000012_create_user_relations_table.php
+✗ 2024_01_01_000013_create_performance_indexes.php
+✗ 2024_01_01_000014_create_infrastructure_tables.php
+✗ 2024_01_01_000017_add_default_to_activity_logs_module.php
+✗ 2024_01_01_000020_add_device_tracking_to_users.php
+✗ 2024_01_09_000001_add_is_active_to_data_kepegawaian.php
+✗ 2024_01_10_000002_add_missing_pegawai_fields.php
+✗ 2024_01_15_000001_normalize_user_data_structure.php
+✗ 2024_01_16_000000_create_device_tokens_table.php
+✗ 2024_01_17_000000_backup_users_data_before_simplification.php
+✗ 2024_01_17_000001_simplify_users_table.php
+✗ 2024_01_17_000002_enhance_data_pribadi_siswa_table.php
+✗ 2024_01_17_000003_enhance_data_kepegawaian_table.php
+✗ 2024_06_15_000000_create_tingkat_table.php
+✗ 2025_01_17_000001_add_default_attendance_settings_by_status.php
+✗ 2025_06_13_035016_create_sessions_table.php
+✗ 2025_06_14_000000_create_roles_and_permissions_tables.php
+✗ 2025_06_14_000001_add_module_to_permissions_table.php
+✗ 2025_06_14_000001_create_role_hierarchies_table.php
+✗ 2025_06_14_000002_add_fields_to_roles_table.php
+✗ 2025_06_15_114851_add_role_hierarchy_columns_to_roles_table.php
+✗ 2025_06_16_122654_add_nis_to_users_table.php
+✗ 2025_06_16_155539_migrate_existing_user_data_to_related_tables.php
+✗ 2025_06_17_055844_add_attendance_settings_data.php
+✗ 2025_06_17_055845_add_attendance_settings_data_v2.php
+✗ 2025_06_17_055846_modify_settings_table_key_constraint.php
+✗ 2025_06_17_092847_update_status_kepegawaian_enum.php
+✗ 2025_06_17_093521_update_asn_attendance_settings.php
+✗ 2025_06_17_093522_fix_status_kepegawaian_enum_quotes.php

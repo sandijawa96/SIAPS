@@ -1,0 +1,1 @@
+* * * * * cd /www/wwwroot/load.sman1sumbercirebon.sch.id && /www/server/php/83/bin/php artisan schedule:run >> /dev/null 2>&1

@@ -1,0 +1,189 @@
+name: iOS Cloud Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      export_method:
+        description: "Metode export IPA"
+        required: true
+        default: "app-store"
+        type: choice
+        options:
+          - app-store
+          - ad-hoc
+          - development
+          - enterprise
+      build_name:
+        description: "Versi aplikasi, mis. 1.0.1"
+        required: false
+        type: string
+      build_number:
+        description: "Build number iOS, mis. 2"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+        working-directory: mobileapp
+    env:
+      FLUTTER_VERSION: 3.32.5
+      IOS_CERTIFICATE_P12_BASE64: ${{ secrets.IOS_CERTIFICATE_P12_BASE64 }}
+      IOS_CERTIFICATE_PASSWORD: ${{ secrets.IOS_CERTIFICATE_PASSWORD }}
+      IOS_PROVISIONING_PROFILE_BASE64: ${{ secrets.IOS_PROVISIONING_PROFILE_BASE64 }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Validate required secrets
+        run: |
+          test -n "$IOS_CERTIFICATE_P12_BASE64" || { echo "IOS_CERTIFICATE_P12_BASE64 belum diisi"; exit 1; }
+          test -n "$IOS_CERTIFICATE_PASSWORD" || { echo "IOS_CERTIFICATE_PASSWORD belum diisi"; exit 1; }
+          test -n "$IOS_PROVISIONING_PROFILE_BASE64" || { echo "IOS_PROVISIONING_PROFILE_BASE64 belum diisi"; exit 1; }
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Install CocoaPods dependencies
+        run: |
+          pod --version
+          cd ios
+          pod install --repo-update
+
+      - name: Import iOS signing assets
+        run: |
+          CERT_PATH="$RUNNER_TEMP/ios_distribution.p12"
+          PROFILE_PATH="$RUNNER_TEMP/ios_profile.mobileprovision"
+          PROFILE_PLIST="$RUNNER_TEMP/ios_profile.plist"
+          KEYCHAIN_PATH="$RUNNER_TEMP/ios-signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -base64 24)"
+
+          echo -n "$IOS_CERTIFICATE_P12_BASE64" | base64 --decode > "$CERT_PATH"
+          echo -n "$IOS_PROVISIONING_PROFILE_BASE64" | base64 --decode > "$PROFILE_PATH"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$IOS_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+          security default-keychain -d user -s "$KEYCHAIN_PATH"
+
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$PROFILE_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/"
+
+          security cms -D -i "$PROFILE_PATH" > "$PROFILE_PLIST"
+
+          PROFILE_NAME=$(/usr/libexec/PlistBuddy -c "Print :Name" "$PROFILE_PLIST")
+          TEAM_ID=$(/usr/libexec/PlistBuddy -c "Print :TeamIdentifier:0" "$PROFILE_PLIST")
+          PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" "$PROFILE_PLIST")
+          BUNDLE_ID=$(grep -m1 'PRODUCT_BUNDLE_IDENTIFIER = ' ios/Runner.xcodeproj/project.pbxproj | sed -E 's/.*PRODUCT_BUNDLE_IDENTIFIER = ([^;]+);/\1/')
+
+          echo "IOS_PROFILE_NAME=$PROFILE_NAME" >> "$GITHUB_ENV"
+          echo "IOS_TEAM_ID=$TEAM_ID" >> "$GITHUB_ENV"
+          echo "IOS_PROFILE_UUID=$PROFILE_UUID" >> "$GITHUB_ENV"
+          echo "IOS_BUNDLE_ID=$BUNDLE_ID" >> "$GITHUB_ENV"
+
+      - name: Patch Runner signing settings for CI
+        run: |
+          python3 - <<'PY'
+          import os
+          import re
+          from pathlib import Path
+
+          pbxproj_path = Path("ios/Runner.xcodeproj/project.pbxproj")
+          bundle_id = os.environ["IOS_BUNDLE_ID"]
+          team_id = os.environ["IOS_TEAM_ID"]
+          profile_name = os.environ["IOS_PROFILE_NAME"]
+
+          text = pbxproj_path.read_text()
+          pattern = re.compile(r"buildSettings = \{\n.*?\t\t\t\};", re.DOTALL)
+
+          def patch_block(block: str) -> str:
+              block = re.sub(r"CODE_SIGN_STYLE = [^;]+;", "CODE_SIGN_STYLE = Manual;", block)
+
+              if "DEVELOPMENT_TEAM =" in block:
+                  block = re.sub(r"DEVELOPMENT_TEAM = [^;]+;", f"DEVELOPMENT_TEAM = {team_id};", block)
+              else:
+                  block = block.replace(
+                      f"PRODUCT_BUNDLE_IDENTIFIER = {bundle_id};",
+                      f"PRODUCT_BUNDLE_IDENTIFIER = {bundle_id};\n\t\t\t\tDEVELOPMENT_TEAM = {team_id};",
+                  )
+
+              if "PROVISIONING_PROFILE_SPECIFIER =" in block:
+                  block = re.sub(
+                      r'PROVISIONING_PROFILE_SPECIFIER = "[^"]+";',
+                      f'PROVISIONING_PROFILE_SPECIFIER = "{profile_name}";',
+                      block,
+                  )
+              else:
+                  block = block.replace(
+                      f"DEVELOPMENT_TEAM = {team_id};",
+                      f'DEVELOPMENT_TEAM = {team_id};\n\t\t\t\tPROVISIONING_PROFILE_SPECIFIER = "{profile_name}";',
+                  )
+
+              return block
+
+          patched_blocks = 0
+          parts = []
+          last_index = 0
+
+          for match in pattern.finditer(text):
+              block = match.group(0)
+              parts.append(text[last_index:match.start()])
+              if f"PRODUCT_BUNDLE_IDENTIFIER = {bundle_id};" in block:
+                  parts.append(patch_block(block))
+                  patched_blocks += 1
+              else:
+                  parts.append(block)
+              last_index = match.end()
+
+          parts.append(text[last_index:])
+          patched_text = "".join(parts)
+
+          if patched_blocks == 0:
+              raise SystemExit("Runner signing blocks tidak ditemukan di project.pbxproj")
+
+          pbxproj_path.write_text(patched_text)
+          print(f"Patched {patched_blocks} Runner signing blocks")
+          PY
+
+      - name: Build IPA
+        run: |
+          BUILD_ARGS=(build ipa --release --export-method="${{ inputs.export_method }}")
+
+          if [ -n "${{ inputs.build_name }}" ]; then
+            BUILD_ARGS+=("--build-name=${{ inputs.build_name }}")
+          fi
+
+          if [ -n "${{ inputs.build_number }}" ]; then
+            BUILD_ARGS+=("--build-number=${{ inputs.build_number }}")
+          fi
+
+          flutter "${BUILD_ARGS[@]}"
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa-${{ github.run_number }}
+          path: |
+            mobileapp/build/ios/ipa/*.ipa
+            mobileapp/build/ios/archive/*.xcarchive
+          if-no-files-found: error

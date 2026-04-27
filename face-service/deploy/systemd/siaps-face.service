@@ -1,0 +1,18 @@
+[Unit]
+Description=SIAPS Face Recognition FastAPI Service
+After=network.target
+
+[Service]
+Type=simple
+User=www
+Group=www
+WorkingDirectory=/www/wwwroot/face-siaps
+EnvironmentFile=/www/wwwroot/face-siaps/.env
+ExecStart=/www/wwwroot/face-siaps/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 9001
+Restart=always
+RestartSec=3
+KillSignal=SIGINT
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,1082 @@
+[
+    {
+        "id": 2804,
+        "nama": "ADELINE LAILI LISTIANTO",
+        "token": "78|nYjDmZmcfS0DAsmP8IR8KFgpU24DADowd9vq3oZl4c9b2054",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2805,
+        "nama": "AISYAH YUMNA NADHIFAH",
+        "token": "79|JSW9hdIhM5PymM98vKLhw6L4tU0x5cR57x9s0KZQb1354cc6",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2806,
+        "nama": "ALSA DWI ANANDIKA",
+        "token": "80|pVHObAQ0wRuT6SLnsu2YerFtqBg4uALuy3UXYPe8308c9a9e",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2807,
+        "nama": "ALYA SHAFIRA QATHRUN NADA",
+        "token": "81|LslTkt1jqBcVPptx8Iej84rCdpyDtCDFQIyZZL9bb115d4da",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2808,
+        "nama": "AMANDA NUR FAHRIYAH",
+        "token": "82|GNITPixR8qnRQVMBoE797AU79ijzFetCNMtoXn4qd207b7cc",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2809,
+        "nama": "ANI DINA NOVATIYANA",
+        "token": "83|fwIfijWj6F27JbwOjRPOXFaWgaxlVI8auK0zFqno1cba601f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2810,
+        "nama": "AYUNI CALISA PUTRI",
+        "token": "84|zyaTwgIankZrh38EBcU8yILgGdpJESSrPjLROcs2e726d73a",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2811,
+        "nama": "AZKA FAUZAN",
+        "token": "85|kUjsoPNsXP8Yc00lfzl6ku10TJDLFzPTpewRXhmWd05c6e6f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2812,
+        "nama": "DANANG NUGROHO",
+        "token": "86|c3hAi1MG7TGeifb8hNFRs2K31hRvH6ecvEo5MbqP05dcfbf3",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2813,
+        "nama": "DARIS BHANUADI",
+        "token": "87|WBFr7LSdsqUT5afQvvhjjftZcYzYzEtiRdMEJ5LWe44ef80b",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2814,
+        "nama": "DESITA MAHARANI",
+        "token": "88|y8Dq8QsWwbawCLPUcFkK6uuDac8oJ9VBr2bGzHP760723e81",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2815,
+        "nama": "DEVIN ATAYA MUHYI",
+        "token": "89|yem3ShHydiViSeY1ZDJGoZQm6bl7nVGyVMmO2WFl7d1c5def",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2816,
+        "nama": "DIANA KHAERUNNISA",
+        "token": "90|beU7XSuHDGMDLDSdstyQNDD63wBBqGzJpCabBgT5c4e7c576",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2817,
+        "nama": "ELYSA",
+        "token": "91|YkxiiXqXI0013bj2rNj5mODk2a1gMxjg0fzZ2DBTb13b597e",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2818,
+        "nama": "FADHILAH AMALIA",
+        "token": "92|hVGZ5NA6MGzlCTMgpIPB6HrVy6mMcvHXgP3Nvjcj12d34c29",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2819,
+        "nama": "FARRAS EVELINE DHIYAUL HAQ",
+        "token": "93|88e4ov0rpc50gNIjVjVLWWGS0lgnoZW85rqq4IW339d6c16b",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2820,
+        "nama": "Habibah Yumna Sahira",
+        "token": "94|MjxlYreV9kqPGddyL7Oi3ryu0J1ugHqFXJ4hQ3JQ2e278c9f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2821,
+        "nama": "JEMIKA NANDA",
+        "token": "95|vusd96dxYKdAs0MnacOnocgOsgPsllcfs28Mcash49cea93c",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2822,
+        "nama": "KEISU AMDI",
+        "token": "96|JunV9NBnyhBYSBUl6GSe4RC10XwuLU62YBgNLVXKb76d6d21",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2823,
+        "nama": "Khoir An Umillah",
+        "token": "97|uUIVDqNRTLXfMy7JuNLuexlpxq6IhuEHwjjx8bN1a7fe733e",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2824,
+        "nama": "KHOIZURON AHMAD ARIFIN",
+        "token": "98|x4HjHrgp8eE7zPuMKVY8yASqQl3TLoKPq6UAjXjx097e7b2a",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2825,
+        "nama": "LUVI FIRMANSYAH",
+        "token": "99|yk8R3PisYBS4IzmG5DPYmkZIb4zDQlLbRT2dG9CQ25e82b5a",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2826,
+        "nama": "MELINA HATA",
+        "token": "100|H0WJJ0trBq3zjoQDl6Fry988EHjC8pBxHsSh9inj72944e98",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2827,
+        "nama": "MIFTAH ANJELITA",
+        "token": "101|Ako3FbLvh7HyUN51oudwnt1kfue8D3hTqaZpi9sOa73dc363",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2828,
+        "nama": "MOCHAMAD RACHMAT RIVALDI",
+        "token": "102|5WHD7g1uOGITLrgew0ms7yy4kkIMA9TAsZeGgNiQ8254aa92",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2829,
+        "nama": "MONICA KHUMAEROH",
+        "token": "103|j3VQI0QTQpRKfz4YS9zk1Ltn7ELiuUDlyApHwrfP88c5a683",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2830,
+        "nama": "MUHAMMAD HAFIDZ GHIFARI ROHMAN",
+        "token": "104|hZ8imPpyAIs1x9sstPHObdcm5asDdZrr8oYEcFK8da840fd8",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2831,
+        "nama": "MUHAMMAD NUR HILMI",
+        "token": "105|1khAPbM1mMEkfXFRxQBKSoAzoLmCSrq9ZgdVzk7H48e85138",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2832,
+        "nama": "Muhammad Zafa Maula",
+        "token": "106|CCFbbAaY4hOfIueEwmPwN9x1yvPmV9NlbHXw0dZE87cf4357",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2833,
+        "nama": "NABILATUL HURIYYAH",
+        "token": "107|YKIP0TQwXk06VyRz4YqEdbGGVBCOqt8uJL9JIIGAe0ced260",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2834,
+        "nama": "PURWATI NINGSIH",
+        "token": "108|v9YRXhd2kEdpB7ntzxhGqnqRNB5SM45CcwntKCzc1a344e8f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2835,
+        "nama": "RAMA AHMAD FATIH",
+        "token": "109|GPt36tIFOI3r4Z6hpEAL628Tt84gxEcYq8wInorU66f99940",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2836,
+        "nama": "RISYA SIERRA",
+        "token": "110|nQQm0K4ZanRDu6jpOA1PTKcszYumAhcn22wlaLhNc0ef1881",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2837,
+        "nama": "ROY SAPUTRA",
+        "token": "111|8dia9bkqDb1eqtvi47rOZ7LBh1qLWJlJ0p4NPKon5bd7cb17",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2838,
+        "nama": "RUTIA",
+        "token": "112|H0VfMxc92mQREepfxfEHaWC6TgBKbbMJm4w7PZZdac7db3b6",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2839,
+        "nama": "SALFAH KUMAEROH",
+        "token": "113|y6L5OVZclKvwy3QESH0Y25Sp5ZZlKOeiPTx0xTZUbf274a39",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2840,
+        "nama": "SALSABILAH PUJI LESTARI",
+        "token": "114|8963Nep6d7ze9cDlsQEFqFCW9EavFrKZGcuPpxp7b851b780",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2841,
+        "nama": "SARIFAH MUDAIM",
+        "token": "115|2YOYj0KaVSG0NmhDSLPOdjOZCXOjOdTxlIpqPkCM24c6080c",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2842,
+        "nama": "SERGIO",
+        "token": "116|YvA26Rnmulcn0B0tUMWfljc1bQSyS96OIumSjk422384a3dd",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2843,
+        "nama": "Sidqi Volan",
+        "token": "117|Ukxv8j4AfoVExZlnm4UkLmpzmA7FqVHkgB4FsUzd9e3cb170",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2844,
+        "nama": "SINTA PURNAMA SARI",
+        "token": "118|b2VlfkrOZmpRTlojYsMBVFhwqPj6aO7wKyHSC7BZ14ceb281",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2845,
+        "nama": "Siti Aisah Wafa Sahidah",
+        "token": "119|briEe3LkaNTzTIQN03aSYcj2MGEpFWwyMLAWq5S53bf534f1",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2846,
+        "nama": "SYAFA NOER AFWA",
+        "token": "120|MJG1uun5HHns55T1vMxAHPBbR0HXBSUaVAc2KWlp5e823637",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2847,
+        "nama": "Syafira Carolin",
+        "token": "121|22WJco46fMI3RtoQsuiy3uKmXrUTVGhDXak1YdVm1729ab0d",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2848,
+        "nama": "VIONA VERONICA",
+        "token": "122|NlI3A4HOo48NtUa91rPEZVd5OwzK4niblrElkMZEd201a0c4",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2849,
+        "nama": "WIRAHMA YUDHA",
+        "token": "123|LJAdhlpVrjDsMGsMWEU0nfTLbsSXDFVJtUulZZqc96f42132",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2850,
+        "nama": "YUNI MAKIYAH SYAHIDAH",
+        "token": "124|VATz3SdZ31ZtCwV4X63xyL0eWfnpp1I0nHx55o1L28faacee",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2851,
+        "nama": "ALLIKHA PUTRI PRAMBUDI",
+        "token": "125|CRZ4q096rmoYg037NvDAvHiXGWfj5Oszrr3FshEJ53fe70d6",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2852,
+        "nama": "ALVIANTI DEWI",
+        "token": "126|dfvw1RJIYqv73yLh6uu9mqpEgaNCRR08FwG1aysF966e6da8",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2853,
+        "nama": "ALVITO JULIAN",
+        "token": "127|DY1UYwGn7Rm4Edsbj9yotj2YjM8t1dWaU5luLXcR0286de6d",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2854,
+        "nama": "ANGGA TEGAR ARDIANSYAH",
+        "token": "128|ta1N6VF1JPjrJpq4jfthGuKVO8FWOPAJb0STvqdxd565e715",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2855,
+        "nama": "ANNISA MIRNI",
+        "token": "129|V69DhfgsKnahWgDgaDpE0JSZq9A7oG1xcVOqE09V8d86e9f3",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2856,
+        "nama": "ARBIE ILHAM RAMADHAN",
+        "token": "130|5SEn2NvUhGJUkZhgWJgTivW2CVCnTHjmcwoqwLdQ98102b73",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2857,
+        "nama": "AR-RASYA RIDWAN AIDIL RACHMAN",
+        "token": "131|Iahx1sf7PZf8MTPqBSKvHymPhnH8UfP7G97KWx7831715403",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2858,
+        "nama": "Aysel Hayfa Hilwana",
+        "token": "132|HD8cf9KEhzOcqA4WHGzN4QeLPD6ASH7yJYdj1fes4c162b8b",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2859,
+        "nama": "AZIZAH INTAN BERILYAN",
+        "token": "133|rSP1NQ9GcDqnklMzwqzZn7pri6upLOW6n92XsPeOc281861f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2860,
+        "nama": "AZKA CIELOVIANO MUKLIS",
+        "token": "134|rnCu09u9b7uA7oVeHD6YfOQt33Kfp7UvuWTlWGprebde80cb",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2861,
+        "nama": "CITRA KHAERUN AMALA",
+        "token": "135|WZ7z2HfFTBZXTj4ajBzolaEFOsIVSsvIrQfUsfeE4686a6a0",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2862,
+        "nama": "Dian Nur Aini",
+        "token": "136|hgenKDXUxcW5nn0YVho8OHz0zdh0UpNwl0dC0Ui0289fc587",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2863,
+        "nama": "Dila Ramahdhani",
+        "token": "137|674uI72zVOSujkvFNM4MPnS7Y6RyyaclLIQRMzSB6ca0fd5f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2864,
+        "nama": "ELSA DAMAYANTI",
+        "token": "138|cW8rkIKlz6NPul4Oi3yrYETQocnknSLSPdAGksj6900ccc7f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2865,
+        "nama": "FACHRUDIN RIAWAN SAPUTRA",
+        "token": "139|bIYTOI4Ogo2SioBM9Ls1RdmpjsUBqp9eGL4ExGMKb7964721",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2866,
+        "nama": "FAHRIZAL CANDRA GUMILANG",
+        "token": "140|4KUfvvGUnyohaQwJMRfOQPJybWC1i7INszuyJEpre45bbbd6",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2867,
+        "nama": "FARAH VARISHA HANA",
+        "token": "141|AgeX5hHTwZ4RChQfkQoCPUGbBAGfyZfUt923SvI1fa8588e1",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2868,
+        "nama": "FARID ARSYADANIL HAQ",
+        "token": "142|t1XsvMNfu38NrgkLcLoBUi6Q6b4u8HuYt2imGI2H2fe91452",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2869,
+        "nama": "GHEA PUSPITA RAMADHANI",
+        "token": "143|IbnGXk6ZmYhoBmLzgcuy7J6xi2Hg7HO45Ap8AwiUee2c4353",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2870,
+        "nama": "GILANG RAMADAN",
+        "token": "144|jYBgfiCBR8LpEPhbf0MrlLyS16zOeyT1BAnhYolHdc4e6fe2",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2871,
+        "nama": "HAFIDZ ZHAFRAN YUSUF",
+        "token": "145|KNUOkYMwCBg5qEgAXpWldu59gfX5sB6f1Xke12dZd9628254",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2872,
+        "nama": "IBRAHIM ALFALAH",
+        "token": "146|BmdSzNsJXjIZB9iny1ci11bg45HGuyi90ttFZNP05c593e6e",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2873,
+        "nama": "IDHA SOVAHANI",
+        "token": "147|Lo5kumvw7NXBTmR5JwbLvqNpG1U2XGl1D318glsK96ac4295",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2874,
+        "nama": "JALU BAGAS RABBANI",
+        "token": "148|XfbfltaU5QONFAYcP1bCBy7FYjyNb91vHnbl5mIh4191a66e",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2875,
+        "nama": "KAILILA GHANIYA ASSYIFA IRYANTO",
+        "token": "149|BcgMP92YbU38D0vK5e4gV2yWIqS9n2S4ofQPdz6Ya63acfca",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2876,
+        "nama": "LIYA",
+        "token": "150|hOHVRPM6Jdhz3Lbi8vlSO9quRM3IY8uWgQtofNOo6c0d194f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2877,
+        "nama": "MECCA NAHARIAH NOOR SABRINA",
+        "token": "151|HIjiwwJJsoRskO0ZBOueEHh8Ltu0cGad6by8Fdasa9efb6b9",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2878,
+        "nama": "MELDA FAUZIAH NINGRUM",
+        "token": "152|nxr98h4FQ2Vn8bMKAstA306LywegslbkmyBKy7P61fdce270",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2879,
+        "nama": "MUHAMAD ARIF FAIZAN",
+        "token": "153|vYgBBcGuFUjcKvtCiFsSiervIQpz9VfGrxgB5Mvma24873f0",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2880,
+        "nama": "MUHAMAD FARHANT MAOELIDANI",
+        "token": "154|leEMMFkU87QEVqaQNaiLVAlGNB8PeOxU0pXodrVv9d74e47b",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2881,
+        "nama": "MUHAMAD SYAHRONI",
+        "token": "155|LbHCAfNvCJPFmPi5MOy0hb2qhijQKlFu5ARP4D6B9101963c",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2882,
+        "nama": "MUHAMMAD ALTHOF RAYIE ARSYULLAH",
+        "token": "156|LaSda9itJnFHdUD7OtTAEZVhr74dh9Nnw93q4VeZ9254167e",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2883,
+        "nama": "NADIA PRATIWI",
+        "token": "157|bHj0PdX1AgeYNCPV74hjP52Ptw9nBC6o51YUfC7Cf24d4190",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2884,
+        "nama": "Nadien Rifadli Adim",
+        "token": "158|3euXMBPA0buQ70fkHqJCe4nCR8Q1E5bw3EWQjZOG78f11337",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2885,
+        "nama": "Naura Kaylatheefa Izzara",
+        "token": "159|VKuoF9U3XSRXmCvMFSXTb31Wfh7jZ9bzivfjgcry35e3e587",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2886,
+        "nama": "Nazwa Fitria Nur Rizki",
+        "token": "160|wjttTi5yGoOd7T3SrvXhrNG5w1DSmcsw7TjvFzx50723738b",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2887,
+        "nama": "PEFITA RATU AULIA IBRAHIM",
+        "token": "161|V4o5HhqhSP4jBEJz3YJLaBECxe9wPh0aHURGbTwG82fa4116",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2888,
+        "nama": "RATU SHAFIRA ARYANTI",
+        "token": "162|aW59PwSqwYxixipMIQVGTBrV4WMrAhq6qa8QLcCO19fc2b76",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2889,
+        "nama": "REGINA FAELA SOFIE",
+        "token": "163|m9mhvONhLs1g2443Rapq6XJjtIUhi2ON7iDvwKd9986e2605",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2890,
+        "nama": "Rekanti",
+        "token": "164|wkS2UQOZKr2PtYo4MgYkIb89vrTXKPsC5RisqtCP31d3163a",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2891,
+        "nama": "Rohmatul Kholiliyah",
+        "token": "165|reqllqgaigSLvOVc7qTFCZ58iJyzddhmugEMegGW3b519d67",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2892,
+        "nama": "SABILA SALFA FITRIYANTI",
+        "token": "166|1AOcx8E3NaV0Jy4dic4bN3Xin8zalWWPpFE8WlPefe7d6760",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2893,
+        "nama": "SCHESHA DWI LARASATI",
+        "token": "167|pZdnWNOjQ7VvJGF85MZjHIkgRn98r7JvJvohA1rd6228758e",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2894,
+        "nama": "SITI ZAENAB",
+        "token": "168|wES39r79RnKsP7deCkLmWCJTB1U0bePu1zljOZPY7c9642e8",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2895,
+        "nama": "TASYA AULINA",
+        "token": "169|4BJoNC6JIiLpK9YqpT2uVWerGT6vWfq6C9Melrne35f1f009",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2896,
+        "nama": "WAFI HAYFA NUGRAHA",
+        "token": "170|3XjMP3JL8NBKIK9ZB55EqSNgGzZHRo7f7sapgBZecb54e014",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2897,
+        "nama": "ZIFILIA FARA AZAHRA",
+        "token": "171|nC5dEh3sDgPIyIfuntcdYlPC7QPJrY4ExK4X9svY4c817777",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2898,
+        "nama": "ADI TRI NOVAL",
+        "token": "172|Jjb4EN2xDGmen0rxnETmHtYY3ouKIK1eHXmU2p1G98a907a8",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2899,
+        "nama": "AGIST NUR MAULA",
+        "token": "173|2rSs88vMZ1Nr9XLthohR91v92Wi0Lsd80wxfBQWn12c2ba0c",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2900,
+        "nama": "AHMAD FIKRI ALAMSYAH",
+        "token": "174|cf7Vp7W7BwjTffT2T80LL8JOeSsNHf1iqbBX5bB2938b81be",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2901,
+        "nama": "AIRIN FEBIYANTI",
+        "token": "175|A4v6cwnNS6MPg7E9bSSByD48jm0nTJHmh2sU7Kzb72c90064",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2902,
+        "nama": "ALIFIA FEBYANI",
+        "token": "176|baIBELRrkrkE6W4ePpYs9PeZq4Wp6sw3KkV4ozo422c428bc",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2903,
+        "nama": "ALMA DINAR ALFIYAH",
+        "token": "177|38fAYGOHOPuDM4BFSKS5VYX9514bcNJbS6AbHy67cd3b3acb",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2904,
+        "nama": "ANANDA BILQIS ROSYANA",
+        "token": "178|mZSvoGou7YMzjEyk5lg9LiLy34uRo0aAWnspYNEkc46ab494",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2905,
+        "nama": "ANNISA TRI BANOWATI",
+        "token": "179|ZCeyaVX2BH47OycQ8JehoY8yHtS4frmv0qiALy5P2da4e316",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2906,
+        "nama": "AZAHRA RESFRIANA PUTRI",
+        "token": "180|oohjyRTaQMJK2W909fMOhdmGvKetInymGek3ZuV83fcded61",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2907,
+        "nama": "DEWI SRI MULYANI",
+        "token": "181|midLtXWv7JDCRhzCes3sIC8KMQwks4Zc4I7P7H0x0b3db583",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2908,
+        "nama": "ELVINA PUTRI HIDAYAT",
+        "token": "182|CeuZxUaJ3V0fa3fP0gvej69HlKMbQ9U7AMwviO4gf5214713",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2909,
+        "nama": "FAKHRI MOHAMMAD HUSEIN",
+        "token": "183|nlmgyCFKLAhCkgpmC99fjiRT44NEfPs6c8CQcUAn71e706c3",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2910,
+        "nama": "FARAH RAHMANIA",
+        "token": "184|b2Vg52pCpylOdkxHq0XYmYRkEg9VW2Nr9yaCXcvL3ff3b895",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2911,
+        "nama": "GIAN ADITYA MAHYA",
+        "token": "185|dGy4IOgvz8OwHa9SalxeE2Jfjsb03FXsm5dEDdhae77051cb",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2912,
+        "nama": "HAFIZH NUR FACHMI",
+        "token": "186|lhUWrG4Nh6yb1VCyAx25kjPr4xwARJkGfxTlRk7Ga0a0d982",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2913,
+        "nama": "IMAM AKHMADDINEJAB",
+        "token": "187|guc89ZfwIOrZVsceA90WObehompcpm4wt6nyaXg10c9125b8",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2914,
+        "nama": "IMEL TRI CAHYATI",
+        "token": "188|aU9D90IUUAre2K5mZxB9o8I9wsTsOFbFIgBLFDCHa2ad7d7e",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2915,
+        "nama": "INDAH NOVIANI",
+        "token": "189|bXa9wYfWRF3MXPibjBC30VEHtmeTdqoOZGIXid2K23a355b6",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2916,
+        "nama": "IS INDI RAHAYU SUCI",
+        "token": "190|svkdy6jrYzwfsNU2nB29ERqoFbY9kPJUYdKq3Hlj9a7534e7",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2917,
+        "nama": "KEISYA PUTRI AZZAHRA",
+        "token": "191|tNurAg7pQuth5AOjTxUSv89qPWlZE6CiEIj6QyhR2ab5bfa4",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2918,
+        "nama": "LABIBAH RIFDAH",
+        "token": "192|1zcYcYrObREjnxGfH9bqmBx8S7ZfKCQVyMqq3vwl4419666b",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2919,
+        "nama": "MAHARDIKA SYAFIQ ATHAYA",
+        "token": "193|YKw2AR1VVMQ0AcwRIA01akIn05OxRjDrQGQUCQUhccdc5780",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2920,
+        "nama": "MEISYA",
+        "token": "194|Xcx4GrVC5ewiH2xVMHEv7LBdQUODSUgJ5Wv5ShF6415e944f",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2921,
+        "nama": "MELINDA FIRDA WULANDARI",
+        "token": "195|cqsUHuiUR2UxjBImWHjY94QqgjIfL4fpzZPzy4ip1dbe9d31",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2922,
+        "nama": "MIZAN ZIYAD AL-HAQ",
+        "token": "196|zW1bdkPyPGxsHCY4jUIGhDgNi7fpAkcFtIOKEHwZ4754956a",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    },
+    {
+        "id": 2923,
+        "nama": "MOHAMAD QORBI IZZATUSSALAM",
+        "token": "197|Aaknt7AqnQ3x1QgzdIcx8C3o7gXmsr3DZqbKj7Zb683c27c6",
+        "latitude": -6.761203,
+        "longitude": 108.47879,
+        "accuracy": 10,
+        "lokasi_id": 1
+    }
+]

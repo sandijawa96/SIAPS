@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Dual Authentication System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .logout-btn {
+            background-color: #dc3545;
+        }
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+        .response {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #dee2e6;
+            cursor: pointer;
+            text-align: center;
+        }
+        .tab.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Dual Authentication System</h1>
+    
+    <div class="container">
+        <h2>Status Autentikasi</h2>
+        <div id="authStatus" class="response info">Belum login</div>
+        <button onclick="checkProfile()" style="width: auto; margin-right: 10px;">Cek Profile</button>
+        <button onclick="logout()" class="logout-btn" style="width: auto;">Logout</button>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('web')">Login Web (Sanctum)</div>
+        <div class="tab" onclick="showTab('mobile')">Login Mobile (JWT)</div>
+    </div>
+
+    <!-- Web Login Tab -->
+    <div id="webTab" class="tab-content active">
+        <div class="container">
+            <h2>Login Web (Admin/Pegawai) - Sanctum</h2>
+            <form id="webLoginForm">
+                <div class="form-group">
+                    <label for="webEmail">Email:</label>
+                    <input type="email" id="webEmail" value="admin@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="webPassword">Password:</label>
+                    <input type="password" id="webPassword" value="password" required>
+                </div>
+                <button type="submit">Login Web</button>
+            </form>
+            <div id="webResponse" class="response"></div>
+        </div>
+    </div>
+
+    <!-- Mobile Login Tab -->
+    <div id="mobileTab" class="tab-content">
+        <div class="container">
+            <h2>Login Mobile (Siswa) - JWT</h2>
+            <form id="mobileLoginForm">
+                <div class="form-group">
+                    <label for="mobileNis">NIS:</label>
+                    <input type="text" id="mobileNis" value="123456789" required>
+                </div>
+                <div class="form-group">
+                    <label for="mobileTanggalLahir">Tanggal Lahir (DD/MM/YYYY):</label>
+                    <input type="text" id="mobileTanggalLahir" value="01/01/2000" required>
+                </div>
+                <button type="submit">Login Mobile</button>
+            </form>
+            <div id="mobileResponse" class="response"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Test API Endpoints</h2>
+        <button onclick="testEndpoint('/api/dashboard/stats')" style="width: auto; margin: 5px;">Dashboard Stats</button>
+        <button onclick="testEndpoint('/api/users')" style="width: auto; margin: 5px;">Users List</button>
+        <button onclick="testEndpoint('/api/absensi/today')" style="width: auto; margin: 5px;">Today Attendance</button>
+        <div id="testResponse" class="response"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function generateDeviceId() {
+            return 'device-' + Math.random().toString(36).substring(7);
+        }
+
+        function getDeviceInfo() {
+            return {
+                platform: 'web',
+                userAgent: navigator.userAgent,
+                language: navigator.language,
+                screenSize: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            };
+        }
+
+        async function makeRequest(url, options = {}) {
+            const token = localStorage.getItem('token');
+            const defaultHeaders = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+            
+            if (token) {
+                defaultHeaders['Authorization'] = `Bearer ${token}`;
+            }
+
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    ...defaultHeaders,
+                    ...options.headers
+                }
+            });
+
+            const data = await response.json();
+            return { response, data };
+        }
+
+        document.getElementById('webLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('webEmail').value;
+            const password = document.getElementById('webPassword').value;
+            
+            try {
+                const { response, data } = await makeRequest(`${API_BASE}/web/login`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        device_name: navigator.userAgent
+                    })
+                });
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
+                    localStorage.setItem('auth_type', data.data.auth_type || 'sanctum');
+                    
+                    document.getElementById('webResponse').className = 'response success';
+                    document.getElementById('webResponse').textContent = JSON.stringify(data, null, 2);
+                    updateAuthStatus();
+                } else {
+                    document.getElementById('webResponse').className = 'response error';
+                    document.getElementById('webResponse').textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                document.getElementById('webResponse').className = 'response error';
+                document.getElementById('webResponse').textContent = 'Error: ' + error.message;
+            }
+        });
+
+        document.getElementById('mobileLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const nis = document.getElementById('mobileNis').value;
+            const tanggal_lahir = document.getElementById('mobileTanggalLahir').value;
+            
+            try {
+                const deviceId = localStorage.getItem('device_id') || generateDeviceId();
+                localStorage.setItem('device_id', deviceId);
+                
+                const { response, data } = await makeRequest(`${API_BASE}/mobile/login-siswa`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        nis,
+                        tanggal_lahir,
+                        device_id: deviceId,
+                        device_name: navigator.userAgent,
+                        device_info: getDeviceInfo()
+                    })
+                });
+
+                if (response.ok) {
+                    localStorage.setItem('token', data.data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
+                    localStorage.setItem('auth_type', data.data.auth_type || 'jwt');
+                    
+                    document.getElementById('mobileResponse').className = 'response success';
+                    document.getElementById('mobileResponse').textContent = JSON.stringify(data, null, 2);
+                    updateAuthStatus();
+                } else {
+                    document.getElementById('mobileResponse').className = 'response error';
+                    document.getElementById('mobileResponse').textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                document.getElementById('mobileResponse').className = 'response error';
+                document.getElementById('mobileResponse').textContent = 'Error: ' + error.message;
+            }
+        });
+
+        async function checkProfile() {
+            try {
+                const authType = localStorage.getItem('auth_type') || 'sanctum';
+                const endpoint = authType === 'jwt' ? '/mobile/profile' : '/web/profile';
+                
+                const { response, data } = await makeRequest(`${API_BASE}${endpoint}`);
+                
+                if (response.ok) {
+                    document.getElementById('authStatus').className = 'response success';
+                    document.getElementById('authStatus').textContent = JSON.stringify(data, null, 2);
+                } else {
+                    document.getElementById('authStatus').className = 'response error';
+                    document.getElementById('authStatus').textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                document.getElementById('authStatus').className = 'response error';
+                document.getElementById('authStatus').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function logout() {
+            try {
+                const authType = localStorage.getItem('auth_type') || 'sanctum';
+                const endpoint = authType === 'jwt' ? '/mobile/logout' : '/web/logout';
+                
+                const { response, data } = await makeRequest(`${API_BASE}${endpoint}`, {
+                    method: 'POST'
+                });
+                
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                localStorage.removeItem('auth_type');
+                
+                document.getElementById('authStatus').className = 'response info';
+                document.getElementById('authStatus').textContent = 'Berhasil logout';
+                
+                // Clear responses
+                document.getElementById('webResponse').textContent = '';
+                document.getElementById('mobileResponse').textContent = '';
+                document.getElementById('testResponse').textContent = '';
+            } catch (error) {
+                document.getElementById('authStatus').className = 'response error';
+                document.getElementById('authStatus').textContent = 'Error logout: ' + error.message;
+            }
+        }
+
+        async function testEndpoint(endpoint) {
+            try {
+                const { response, data } = await makeRequest(`${API_BASE}${endpoint}`);
+                
+                if (response.ok) {
+                    document.getElementById('testResponse').className = 'response success';
+                    document.getElementById('testResponse').textContent = JSON.stringify(data, null, 2);
+                } else {
+                    document.getElementById('testResponse').className = 'response error';
+                    document.getElementById('testResponse').textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                document.getElementById('testResponse').className = 'response error';
+                document.getElementById('testResponse').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        function updateAuthStatus() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            const authType = localStorage.getItem('auth_type');
+            
+            if (token && user) {
+                const userData = JSON.parse(user);
+                document.getElementById('authStatus').className = 'response success';
+                document.getElementById('authStatus').textContent = `Login sebagai: ${userData.name || userData.nama_lengkap}\nAuth Type: ${authType}\nRole: ${userData.role}`;
+            } else {
+                document.getElementById('authStatus').className = 'response info';
+                document.getElementById('authStatus').textContent = 'Belum login';
+            }
+        }
+
+        // Check auth status on page load
+        updateAuthStatus();
+    </script>
+</body>
+</html>

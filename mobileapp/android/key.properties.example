@@ -1,0 +1,4 @@
+storeFile=sman1sumber.jks
+storePassword=change-me
+keyAlias=sman1sumber
+keyPassword=change-me

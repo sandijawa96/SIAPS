@@ -1,0 +1,19 @@
+[
+  {
+    "id": "siswa-001",
+    "token": "PASTE_ACCESS_TOKEN_DI_SINI",
+    "latitude": -6.750000,
+    "longitude": 108.550000,
+    "accuracy": 10,
+    "lokasi_id": 1
+  },
+  {
+    "id": "siswa-002",
+    "token": "PASTE_ACCESS_TOKEN_DI_SINI",
+    "latitude": -6.750000,
+    "longitude": 108.550000,
+    "accuracy": 12,
+    "lokasi_id": 1
+  }
+]
+

@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar for sidebar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  @apply bg-blue-900/30;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  @apply bg-blue-600/50 rounded-full hover:bg-blue-500/50 transition-colors duration-200;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* MUI Overrides */
+.MuiDrawer-paper {
+  border-right: none !important;
+}
+
+.MuiListItem-root.active {
+  @apply bg-white/10;
+}
+
+.MuiListItem-root.active .MuiListItemIcon-root,
+.MuiListItem-root.active .MuiListItemText-root {
+  @apply text-white;
+}
+
+.MuiListItem-root:not(.active):hover {
+  @apply bg-blue-700/30;
+}
+
+/* Custom utility classes */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600;
+}
+
+.bg-gradient-blue {
+  @apply bg-gradient-to-r from-blue-800 to-blue-900;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
