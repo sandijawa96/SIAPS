@@ -1,0 +1,90 @@
+name: SBT iOS Unsigned Build for Ksign
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_name:
+        description: "Versi aplikasi SBT, mis. 1.0.1"
+        required: false
+        type: string
+      build_number:
+        description: "Build number iOS SBT, mis. 2"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build-sbt-ios-unsigned:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+        working-directory: sbt-smanis
+    env:
+      FLUTTER_VERSION: 3.32.5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Flutter version
+        run: flutter --version
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Install CocoaPods dependencies
+        run: |
+          pod --version
+          cd ios
+          pod install --repo-update
+
+      - name: Build SBT iOS app without code signing
+        run: |
+          BUILD_ARGS=(build ios --release --no-codesign)
+
+          if [ -n "${{ inputs.build_name }}" ]; then
+            BUILD_ARGS+=("--build-name=${{ inputs.build_name }}")
+          fi
+
+          if [ -n "${{ inputs.build_number }}" ]; then
+            BUILD_ARGS+=("--build-number=${{ inputs.build_number }}")
+          fi
+
+          flutter "${BUILD_ARGS[@]}"
+
+      - name: Package unsigned IPA for Ksign
+        run: |
+          APP_PATH="build/ios/iphoneos/Runner.app"
+          IPA_DIR="build/ios/unsigned-ipa"
+          IPA_PATH="build/ios/sbt-smanis-ios-unsigned-${GITHUB_RUN_NUMBER}.ipa"
+
+          test -d "$APP_PATH" || { echo "Runner.app tidak ditemukan di $APP_PATH"; exit 1; }
+
+          rm -rf "$IPA_DIR" "$IPA_PATH"
+          mkdir -p "$IPA_DIR/Payload"
+          cp -R "$APP_PATH" "$IPA_DIR/Payload/Runner.app"
+
+          (
+            cd "$IPA_DIR"
+            /usr/bin/zip -qry "../$(basename "$IPA_PATH")" Payload
+          )
+
+          ls -lh "$IPA_PATH"
+
+      - name: Upload unsigned IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbt-ios-unsigned-ipa-ksign-${{ github.run_number }}
+          path: sbt-smanis/build/ios/*.ipa
+          if-no-files-found: error
