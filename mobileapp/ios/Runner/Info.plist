@@ -24,10 +24,25 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>SIAPS memerlukan kamera untuk mengambil foto absensi, pengajuan izin, dan pendaftaran wajah.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>SIAPS memerlukan lokasi saat aplikasi digunakan untuk memverifikasi posisi absensi.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>SIAPS memerlukan akses lokasi untuk fitur pelacakan kehadiran saat fitur tersebut diaktifkan.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>SIAPS memerlukan akses galeri untuk memilih foto profil atau lampiran izin.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>SIAPS memerlukan izin menyimpan foto jika pengguna memilih menyimpan lampiran dari aplikasi.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

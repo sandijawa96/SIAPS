@@ -178,9 +178,43 @@ class PermissionService {
     }
   }
 
-  /// Check and request storage permission (Universal approach)
+  /// Check media/storage permission.
   static Future<PermissionResult> checkStoragePermission() async {
     try {
+      if (kIsWeb) {
+        return const PermissionResult(
+          isGranted: true,
+          isDenied: false,
+          isPermanentlyDenied: false,
+          canRequest: false,
+          message: 'Storage permission tidak diperlukan pada web.',
+        );
+      }
+
+      if (Platform.isIOS) {
+        final status = await Permission.photos.status;
+        final isGranted = status.isGranted || status.isLimited;
+        debugPrint('$_tag: Photos permission status (iOS): $status');
+
+        return PermissionResult(
+          isGranted: isGranted,
+          isDenied: !isGranted,
+          isPermanentlyDenied: status.isPermanentlyDenied,
+          canRequest: !status.isPermanentlyDenied,
+          message: _getPermissionMessage('Photos', status),
+        );
+      }
+
+      if (!Platform.isAndroid) {
+        return const PermissionResult(
+          isGranted: true,
+          isDenied: false,
+          isPermanentlyDenied: false,
+          canRequest: false,
+          message: 'Storage permission tidak diperlukan pada platform ini.',
+        );
+      }
+
       final DeviceInfoPlugin info = DeviceInfoPlugin();
       final AndroidDeviceInfo androidInfo = await info.androidInfo;
       final int sdkInt = androidInfo.version.sdkInt;
@@ -239,10 +273,43 @@ class PermissionService {
     }
   }
 
-  /// Request storage permission (Android 13+ Compatible with Robust Fallback)
+  /// Request media/storage permission.
   static Future<PermissionResult> requestStoragePermission() async {
     try {
-      // Get Android version info
+      if (kIsWeb) {
+        return const PermissionResult(
+          isGranted: true,
+          isDenied: false,
+          isPermanentlyDenied: false,
+          canRequest: false,
+          message: 'Storage permission tidak diperlukan pada web.',
+        );
+      }
+
+      if (Platform.isIOS) {
+        final status = await Permission.photos.request();
+        final isGranted = status.isGranted || status.isLimited;
+        debugPrint('$_tag: Photos permission request result (iOS): $status');
+
+        return PermissionResult(
+          isGranted: isGranted,
+          isDenied: !isGranted,
+          isPermanentlyDenied: status.isPermanentlyDenied,
+          canRequest: !status.isPermanentlyDenied,
+          message: _getPermissionMessage('Photos', status),
+        );
+      }
+
+      if (!Platform.isAndroid) {
+        return const PermissionResult(
+          isGranted: true,
+          isDenied: false,
+          isPermanentlyDenied: false,
+          canRequest: false,
+          message: 'Storage permission tidak diperlukan pada platform ini.',
+        );
+      }
+
       final DeviceInfoPlugin info = DeviceInfoPlugin();
       final AndroidDeviceInfo androidInfo = await info.androidInfo;
       final int sdkInt = androidInfo.version.sdkInt;
@@ -334,6 +401,16 @@ class PermissionService {
       );
     } catch (e) {
       debugPrint('$_tag: ❌ Error requesting storage permission: $e');
+
+      if (!Platform.isAndroid) {
+        return PermissionResult(
+          isGranted: false,
+          isDenied: true,
+          isPermanentlyDenied: false,
+          canRequest: false,
+          message: 'Critical error requesting media permission: $e',
+        );
+      }
 
       // Emergency fallback - try basic storage permission
       try {

@@ -36,7 +36,11 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
   final localNotifications = FlutterLocalNotificationsPlugin();
   const androidInit = AndroidInitializationSettings(_kAndroidNotificationIcon);
-  const initSettings = InitializationSettings(android: androidInit);
+  const darwinInit = DarwinInitializationSettings();
+  const initSettings = InitializationSettings(
+    android: androidInit,
+    iOS: darwinInit,
+  );
   await localNotifications.initialize(initSettings);
   final androidNotifications =
       localNotifications.resolvePlatformSpecificImplementation<
@@ -67,6 +71,11 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
           priority: Priority.high,
           visibility: NotificationVisibility.public,
           playSound: true,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
         ),
       ),
       payload: jsonEncode(message.data),
@@ -125,7 +134,15 @@ class PushNotificationService {
 
     const androidInit =
         AndroidInitializationSettings(_kAndroidNotificationIcon);
-    const initSettings = InitializationSettings(android: androidInit);
+    const darwinInit = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
+    const initSettings = InitializationSettings(
+      android: androidInit,
+      iOS: darwinInit,
+    );
     await _localNotifications.initialize(initSettings);
 
     final androidNotifications =
@@ -329,6 +346,11 @@ class PushNotificationService {
           priority: Priority.high,
           visibility: NotificationVisibility.public,
           playSound: true,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
         ),
       ),
       payload: payload,
