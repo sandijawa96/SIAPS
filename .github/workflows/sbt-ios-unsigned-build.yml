@@ -1,6 +1,12 @@
 name: SBT iOS Unsigned Build for Ksign
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sbt-ios-unsigned-build.yml"
+      - "sbt-smanis/**"
   workflow_dispatch:
     inputs:
       build_name:
@@ -43,14 +49,37 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
+      - name: Show build context
+        run: |
+          echo "Git commit: $GITHUB_SHA"
+          grep -n "platform :ios" ios/Podfile
+          grep -n "IPHONEOS_DEPLOYMENT_TARGET" ios/Runner.xcodeproj/project.pbxproj | head
+
       - name: Install Flutter dependencies
         run: flutter pub get
 
       - name: Install CocoaPods dependencies
         run: |
           pod --version
+          rm -rf ios/Pods ios/Podfile.lock
           cd ios
-          pod install --repo-update
+          set +e
+          pod install --repo-update 2>&1 | tee ../pod-install.log
+          pod_status=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$pod_status" -ne 0 ]; then
+            echo "CocoaPods failure excerpt:"
+            tail -n 120 ../pod-install.log || true
+
+            grep -E "^\[!\]|required a higher minimum|In Podfile|Specs satisfying|Error" ../pod-install.log \
+              | tail -n 30 \
+              | while IFS= read -r line; do
+                  echo "::error title=CocoaPods::$line"
+                done
+
+            exit "$pod_status"
+          fi
 
       - name: Build SBT iOS app without code signing
         run: |
