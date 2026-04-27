@@ -1,6 +1,12 @@
 name: iOS Unsigned Build for Ksign
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/ios-unsigned-build.yml"
+      - "mobileapp/**"
   workflow_dispatch:
     inputs:
       build_name:
@@ -53,9 +59,34 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Verify iOS deployment target
+        run: |
+          echo "Podfile platform:"
+          grep -n "platform :ios" ios/Podfile
+
+          echo "Runner deployment targets:"
+          grep -n "IPHONEOS_DEPLOYMENT_TARGET" ios/Runner.xcodeproj/project.pbxproj | head
+
+          echo "Flutter framework minimum OS:"
+          grep -n -A1 "MinimumOSVersion" ios/Flutter/AppFrameworkInfo.plist
+
+          echo "Firebase plugin podspec target:"
+          grep -n "deployment_target" ios/.symlinks/plugins/firebase_core/ios/firebase_core.podspec
+
+          if ! grep -q "platform :ios, '15.0'" ios/Podfile; then
+            echo "::error::ios/Podfile tidak memakai platform iOS 15.0"
+            exit 1
+          fi
+
+          if grep -q "IPHONEOS_DEPLOYMENT_TARGET = 1[0-4]\\." ios/Runner.xcodeproj/project.pbxproj; then
+            echo "::error::Masih ada IPHONEOS_DEPLOYMENT_TARGET di bawah iOS 15.0"
+            exit 1
+          fi
+
       - name: Install CocoaPods dependencies
         run: |
           pod --version
+          rm -rf ios/Pods ios/Podfile.lock
           cd ios
           pod install --repo-update
 
