@@ -2,7 +2,7 @@ name: sbt_smanis
 description: SBT SMANIS - browser ujian siswa SMAN 1 Sumber Cirebon.
 publish_to: "none"
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.8.1

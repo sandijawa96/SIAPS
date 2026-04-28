@@ -19,17 +19,26 @@ class PrecheckService {
   Future<List<PrecheckItem>> runAll() async {
     await _sbt.loadConfig(force: true);
 
-    final results = await Future.wait<PrecheckItem>([
+    final checks = <Future<PrecheckItem>>[
       _checkSbtConfig(),
       _checkAppVersion(),
       _checkCbtServer(),
       _checkBattery(),
-      _checkMultiWindow(),
-      _checkScreenPinning(),
-      _checkDoNotDisturb(),
-      _checkOverlayProtection(),
       _checkScreenProtection(),
-    ]);
+    ];
+
+    if (Platform.isAndroid) {
+      checks.addAll([
+        _checkMultiWindow(),
+        _checkScreenPinning(),
+        _checkDoNotDisturb(),
+        _checkOverlayProtection(),
+      ]);
+    } else if (Platform.isIOS) {
+      checks.add(_checkIosExitLockPolicy());
+    }
+
+    final results = await Future.wait<PrecheckItem>(checks);
 
     return results;
   }
@@ -136,7 +145,7 @@ class PrecheckService {
       final request = await client
           .getUrl(Uri.parse(_sbt.config.examUrl))
           .timeout(const Duration(seconds: 6));
-      request.headers.set(HttpHeaders.userAgentHeader, 'SBT-SMANIS/1.0');
+      request.headers.set(HttpHeaders.userAgentHeader, _sbt.config.webviewUserAgent);
 
       final response = await request.close().timeout(
         const Duration(seconds: 8),
@@ -385,6 +394,18 @@ class PrecheckService {
   }
 
   Future<PrecheckItem> _checkScreenProtection() async {
+    if (Platform.isIOS) {
+      return const PrecheckItem(
+        id: 'screen',
+        title: 'Proteksi layar',
+        description:
+            'iPhone memakai deteksi keluar aplikasi. Screenshot tidak diblokir oleh mode ini.',
+        status: PrecheckStatus.warning,
+        detail: 'Gunakan pengawasan ruang ujian untuk kontrol tambahan',
+        required: false,
+      );
+    }
+
     return const PrecheckItem(
       id: 'screen',
       title: 'Proteksi layar',
@@ -392,6 +413,48 @@ class PrecheckService {
       status: PrecheckStatus.passed,
       detail: 'Aktif saat ujian dimulai',
       required: false,
+    );
+  }
+
+  Future<PrecheckItem> _checkIosExitLockPolicy() async {
+    final config = _sbt.config;
+
+    if (!config.iosLockOnBackground) {
+      return const PrecheckItem(
+        id: 'ios-exit-lock',
+        title: 'Kunci saat keluar aplikasi',
+        description:
+            'Pengaturan iOS belum mengunci ujian saat aplikasi keluar dari layar.',
+        status: PrecheckStatus.failed,
+      );
+    }
+
+    if (!config.requiresSupervisorCode) {
+      return const PrecheckItem(
+        id: 'ios-exit-lock',
+        title: 'Kunci saat keluar aplikasi',
+        description:
+            'Mode keamanan belum memakai kode pengawas, sehingga siswa bisa lanjut sendiri setelah keluar aplikasi.',
+        status: PrecheckStatus.failed,
+      );
+    }
+
+    if (!config.hasSupervisorCode) {
+      return const PrecheckItem(
+        id: 'ios-exit-lock',
+        title: 'Kunci saat keluar aplikasi',
+        description: 'Kode pengawas belum dibuat di pengaturan SBT SIAPS.',
+        status: PrecheckStatus.failed,
+      );
+    }
+
+    return const PrecheckItem(
+      id: 'ios-exit-lock',
+      title: 'Kunci saat keluar aplikasi',
+      description:
+          'Jika SBT masuk background atau ditutup, ujian akan dikunci dan butuh kode pengawas.',
+      status: PrecheckStatus.passed,
+      detail: 'Aktif untuk iPhone/iPad',
     );
   }
 }

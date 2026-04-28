@@ -15,6 +15,7 @@ const createForm = () => ({
   app_name: 'SIAPS Mobile',
   app_description: '',
   target_audience: 'all',
+  bundle_identifier: '',
   platform: 'android',
   release_channel: 'stable',
   public_version: '',
@@ -36,6 +37,10 @@ const createForm = () => ({
 });
 
 const platformOptions = [{ value: 'android', label: 'Android' }, { value: 'ios', label: 'iPhone / iOS' }];
+const platformTabs = [
+  { value: 'android', label: 'Android', description: 'Release APK Android' },
+  { value: 'ios', label: 'iPhone', description: 'Release IPA iOS' },
+];
 const channelOptions = [{ value: 'stable', label: 'Stable' }, { value: 'internal', label: 'Internal' }, { value: 'beta', label: 'Beta' }];
 const audienceOptions = [{ value: 'all', label: 'Semua Akun' }, { value: 'siswa', label: 'Siswa' }, { value: 'staff', label: 'Pegawai Sekolah' }];
 const updateModeOptions = [{ value: 'optional', label: 'Optional' }, { value: 'required', label: 'Required' }];
@@ -112,6 +117,7 @@ const buildPayload = (form) => {
     app_name: form.app_name.trim(),
     app_description: form.app_description.trim() || null,
     target_audience: form.target_audience,
+    bundle_identifier: form.bundle_identifier.trim() || null,
     platform: form.platform,
     release_channel: form.release_channel,
     public_version: form.public_version.trim(),
@@ -154,7 +160,7 @@ const MobileReleaseManagement = () => {
   const [uploadProgress, setUploadProgress] = useState(null);
   const [saveFeedback, setSaveFeedback] = useState(null);
   const [editingId, setEditingId] = useState(null);
-  const [filters, setFilters] = useState({ app_key: '', platform: '', release_channel: '', target_audience: '' });
+  const [filters, setFilters] = useState({ app_key: '', platform: 'android', release_channel: '', target_audience: '' });
   const [form, setForm] = useState(createForm);
 
   const loadReleases = async () => {
@@ -183,6 +189,8 @@ const MobileReleaseManagement = () => {
     requiredUpdates: releases.filter((item) => item.is_active && (item.update_mode === 'required' || item.update_policies?.siswa?.update_mode === 'required' || item.update_policies?.staff?.update_mode === 'required')).length,
   }), [releases]);
 
+  const activePlatformLabel = platformTabs.find((tab) => tab.value === filters.platform)?.label || 'Android';
+
   const scrollToForm = () => {
     window.requestAnimationFrame(() => {
       formSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -207,6 +215,7 @@ const MobileReleaseManagement = () => {
       app_name: release.app_name || 'SIAPS Mobile',
       app_description: release.app_description || '',
       target_audience: release.target_audience || 'all',
+      bundle_identifier: release.bundle_identifier || '',
       platform: release.platform || 'android',
       release_channel: release.release_channel || 'stable',
       public_version: release.public_version || '',
@@ -326,7 +335,12 @@ const MobileReleaseManagement = () => {
       }
 
       openDirectDownload(downloadUrl);
-      enqueueSnackbar(`Unduhan ${release.app_name} disiapkan. Jika belum muncul, cek izin download browser.`, { variant: 'success' });
+      enqueueSnackbar(
+        release.platform === 'ios'
+          ? `Installer iPhone ${release.app_name} dibuka. Gunakan Safari bila browser tidak merespons.`
+          : `Unduhan ${release.app_name} disiapkan. Jika belum muncul, cek izin download browser.`,
+        { variant: 'success' }
+      );
     } catch (error) {
       enqueueSnackbar(
         error?.response?.data?.message || error?.message || 'Gagal mengunduh file privat.',
@@ -431,6 +445,12 @@ const MobileReleaseManagement = () => {
             <label className="space-y-2"><span className="text-sm font-medium text-slate-700">Channel</span><select name="release_channel" value={form.release_channel} onChange={handleChange} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500">{channelOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
           </div>
 
+          <label className="space-y-2">
+            <span className="text-sm font-medium text-slate-700">Bundle Identifier iOS</span>
+            <input name="bundle_identifier" value={form.bundle_identifier} onChange={handleChange} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500" placeholder="Contoh: id.sch.sman1sumbercirebon.sbt" />
+            <span className="block text-xs text-slate-500">Wajib untuk instalasi OTA iPhone. Harus sama dengan bundle id IPA hasil Ksign.</span>
+          </label>
+
           <div className="grid gap-4 md:grid-cols-2">
             <label className="space-y-2"><span className="text-sm font-medium text-slate-700">Public Version</span><input name="public_version" value={form.public_version} onChange={handleChange} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500" placeholder="1.2.3" required /></label>
             <label className="space-y-2"><span className="text-sm font-medium text-slate-700">Build Number</span><input type="number" min="1" name="build_number" value={form.build_number} onChange={handleChange} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500" placeholder="123" required /></label>
@@ -518,16 +538,47 @@ const MobileReleaseManagement = () => {
         </form>
 
         <section className="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">Daftar Release {activePlatformLabel}</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Android dan iPhone dipisahkan agar file APK dan IPA tidak tercampur saat dicek atau diuji pasang.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-2">
+            <div className="grid gap-2 sm:grid-cols-2">
+              {platformTabs.map((tab) => {
+                const isActive = filters.platform === tab.value;
+                return (
+                  <button
+                    key={tab.value}
+                    type="button"
+                    onClick={() => setFilters((current) => ({ ...current, platform: tab.value }))}
+                    className={`rounded-xl px-4 py-3 text-left transition ${
+                      isActive
+                        ? 'bg-slate-950 text-white shadow'
+                        : 'bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span className="block text-sm font-semibold">{tab.label}</span>
+                    <span className={`mt-1 block text-xs ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>
+                      {tab.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="flex flex-wrap items-end gap-3">
             <label className="min-w-[180px] flex-1 space-y-2"><span className="text-sm font-medium text-slate-700">Filter App Key</span><input value={filters.app_key} onChange={(event) => setFilters((current) => ({ ...current, app_key: event.target.value }))} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500" placeholder="siaps / ujian" /></label>
-            <label className="min-w-[160px] flex-1 space-y-2"><span className="text-sm font-medium text-slate-700">Platform</span><select value={filters.platform} onChange={(event) => setFilters((current) => ({ ...current, platform: event.target.value }))} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500"><option value="">Semua</option>{platformOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
             <label className="min-w-[160px] flex-1 space-y-2"><span className="text-sm font-medium text-slate-700">Channel</span><select value={filters.release_channel} onChange={(event) => setFilters((current) => ({ ...current, release_channel: event.target.value }))} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500"><option value="">Semua</option>{channelOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
             <label className="min-w-[180px] flex-1 space-y-2"><span className="text-sm font-medium text-slate-700">Audience</span><select value={filters.target_audience} onChange={(event) => setFilters((current) => ({ ...current, target_audience: event.target.value }))} className="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-cyan-500"><option value="">Semua</option>{audienceOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
           </div>
           {loading ? (
             <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">Memuat distribusi aplikasi...</div>
           ) : releases.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">Belum ada release yang cocok dengan filter.</div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">Belum ada release {activePlatformLabel} yang cocok dengan filter.</div>
           ) : (
             <div className="space-y-4">
               {releases.map((release) => {
@@ -549,10 +600,10 @@ const MobileReleaseManagement = () => {
                       </div>
 
                       <div className="flex flex-wrap gap-2">
-                        {effectiveDownloadUrl ? release.download_kind === 'managed_asset' ? (
+                        {effectiveDownloadUrl ? (release.download_kind === 'managed_asset' || release.platform === 'ios') ? (
                           <button type="button" onClick={() => handleManagedDownload(release)} className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">
                             <Download size={16} />
-                            Uji Unduh
+                            {release.platform === 'ios' ? 'Uji Pasang' : 'Uji Unduh'}
                           </button>
                         ) : (
                           <a href={effectiveDownloadUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-100">

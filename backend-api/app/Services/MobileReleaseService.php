@@ -279,6 +279,7 @@ class MobileReleaseService
             'app_description' => $release->app_description,
             'target_audience' => $release->target_audience,
             'target_audience_label' => $release->target_audience_label,
+            'bundle_identifier' => $this->resolveBundleIdentifier($release),
             'platform' => $release->platform,
             'platform_label' => $release->platform_label,
             'release_channel' => $release->release_channel,
@@ -330,6 +331,7 @@ class MobileReleaseService
             'app_description' => $release->app_description,
             'target_audience' => $release->target_audience,
             'target_audience_label' => $release->target_audience_label,
+            'bundle_identifier' => $this->resolveBundleIdentifier($release),
             'platform' => $release->platform,
             'platform_label' => $release->platform_label,
             'release_channel' => $release->release_channel,
@@ -362,6 +364,7 @@ class MobileReleaseService
             'app_key' => $release->app_key,
             'app_name' => $release->app_name,
             'app_label' => $release->app_label,
+            'bundle_identifier' => $this->resolveBundleIdentifier($release),
             'platform' => $release->platform,
             'platform_label' => $release->platform_label,
             'release_channel' => $release->release_channel,
@@ -451,6 +454,7 @@ class MobileReleaseService
         $normalized['app_name'] = $this->normalizeNullableString($payload['app_name'] ?? null) ?: self::APP_NAME_DEFAULT;
         $normalized['app_description'] = $this->normalizeNullableString($payload['app_description'] ?? null);
         $normalized['target_audience'] = strtolower(trim((string) ($payload['target_audience'] ?? self::AUDIENCE_ALL)));
+        $normalized['bundle_identifier'] = $this->normalizeNullableString($payload['bundle_identifier'] ?? null);
         $normalized['platform'] = strtolower(trim((string) $payload['platform']));
         $normalized['release_channel'] = strtolower(trim((string) ($payload['release_channel'] ?? 'stable')));
         $normalized['public_version'] = trim((string) $payload['public_version']);
@@ -564,6 +568,20 @@ class MobileReleaseService
         $assetDisk = strtolower(trim((string) ($release->asset_disk ?: '')));
 
         return $assetDisk !== '' ? $assetDisk : self::STORAGE_DISK_LEGACY_PUBLIC;
+    }
+
+    public function resolveBundleIdentifier(MobileRelease $release): ?string
+    {
+        $explicit = $this->normalizeNullableString($release->bundle_identifier);
+        if ($explicit !== null) {
+            return $explicit;
+        }
+
+        return match (strtolower(trim((string) $release->app_key))) {
+            'siaps' => 'id.sch.sman1sumbercirebon.siaps',
+            'sbt-smanis' => 'id.sch.sman1sumbercirebon.sbt',
+            default => null,
+        };
     }
 
     /**

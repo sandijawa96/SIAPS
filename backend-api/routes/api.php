@@ -132,6 +132,10 @@ Route::get('/mobile-releases/{mobileRelease}/signed-download', [MobileReleaseCon
     ->middleware('signed')
     ->whereNumber('mobileRelease')
     ->name('mobile-releases.signed-download');
+Route::get('/mobile-releases/{mobileRelease}/ios-manifest', [MobileReleaseController::class, 'iosManifest'])
+    ->middleware('signed')
+    ->whereNumber('mobileRelease')
+    ->name('mobile-releases.ios-manifest');
 Route::get('/backups/{filename}/signed-download', [BackupController::class, 'signedDownload'])
     ->middleware('signed')
     ->where('filename', '.*\.zip')

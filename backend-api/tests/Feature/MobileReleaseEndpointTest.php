@@ -472,6 +472,47 @@ class MobileReleaseEndpointTest extends TestCase
         Storage::disk('local')->assertMissing($originalAssetPath);
     }
 
+    public function test_ios_download_link_returns_ota_install_manifest_url(): void
+    {
+        $admin = User::factory()->create();
+        $admin->givePermissionTo('manage_settings');
+
+        $release = MobileRelease::query()->create([
+            'app_key' => 'sbt-smanis',
+            'app_name' => 'SBT SMANIS',
+            'target_audience' => 'siswa',
+            'bundle_identifier' => 'id.sch.sman1sumbercirebon.sbt',
+            'platform' => 'ios',
+            'release_channel' => 'stable',
+            'public_version' => '1.0.0',
+            'build_number' => 1,
+            'download_url' => 'https://example.test/sbt-smanis.ipa',
+            'update_mode' => 'optional',
+            'is_active' => true,
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $payload = $this->actingAs($admin, 'sanctum')
+            ->getJson("/api/mobile-releases/{$release->id}/download-link")
+            ->assertStatus(200)
+            ->assertJsonPath('success', true)
+            ->json('data');
+
+        $this->assertStringStartsWith('itms-services://?action=download-manifest&url=', $payload['download_url']);
+        $this->assertStringContainsString('/api/mobile-releases/' . $release->id . '/ios-manifest', $payload['ios_manifest_url']);
+        $this->assertSame($payload['download_url'], $payload['ios_install_url']);
+
+        $manifestResponse = $this->get($payload['ios_manifest_url'])
+            ->assertStatus(200)
+            ->assertHeader('content-type', 'text/xml; charset=UTF-8');
+
+        $manifest = $manifestResponse->getContent();
+        $this->assertStringContainsString('<key>bundle-identifier</key>', $manifest);
+        $this->assertStringContainsString('<string>id.sch.sman1sumbercirebon.sbt</string>', $manifest);
+        $this->assertStringContainsString('<string>https://example.test/sbt-smanis.ipa</string>', $manifest);
+    }
+
     public function test_authenticated_version_check_uses_role_specific_policy_override(): void
     {
         $admin = User::factory()->create();

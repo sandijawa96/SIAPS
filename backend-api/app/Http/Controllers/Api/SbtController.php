@@ -326,6 +326,7 @@ class SbtController extends BaseController
         $validator = Validator::make($request->all(), [
             'enabled' => 'required|boolean',
             'exam_url' => 'required|url|max:2048',
+            'webview_user_agent' => 'nullable|string|max:255',
             'security_mode' => ['required', Rule::in(['warning', 'supervisor_code', 'locked'])],
             'supervisor_code' => 'nullable|string|min:4|max:64',
             'clear_supervisor_code' => 'nullable|boolean',
@@ -333,6 +334,7 @@ class SbtController extends BaseController
             'require_dnd' => 'required|boolean',
             'require_screen_pinning' => 'required|boolean',
             'require_overlay_protection' => 'required|boolean',
+            'ios_lock_on_background' => 'nullable|boolean',
             'minimum_battery_level' => 'required|integer|min:0|max:100',
             'heartbeat_interval_seconds' => 'required|integer|min:10|max:300',
             'maintenance_enabled' => 'required|boolean',
@@ -359,11 +361,13 @@ class SbtController extends BaseController
             'enabled' => (bool) $validated['enabled'],
             'exam_url' => $examUrl,
             'exam_host' => strtolower($examHost),
+            'webview_user_agent' => $this->nullableString($validated['webview_user_agent'] ?? null) ?? 'SBT-SMANIS/1.0',
             'security_mode' => $validated['security_mode'],
             'minimum_app_version' => $this->nullableString($validated['minimum_app_version'] ?? null),
             'require_dnd' => (bool) $validated['require_dnd'],
             'require_screen_pinning' => (bool) $validated['require_screen_pinning'],
             'require_overlay_protection' => (bool) $validated['require_overlay_protection'],
+            'ios_lock_on_background' => (bool) ($validated['ios_lock_on_background'] ?? $setting->ios_lock_on_background ?? true),
             'minimum_battery_level' => (int) $validated['minimum_battery_level'],
             'heartbeat_interval_seconds' => (int) $validated['heartbeat_interval_seconds'],
             'maintenance_enabled' => (bool) $validated['maintenance_enabled'],
@@ -402,6 +406,14 @@ class SbtController extends BaseController
     {
         $setting = SbtSetting::current();
         $cutoff = now()->subSeconds(max(90, (int) $setting->heartbeat_interval_seconds * 3));
+        $lockEventTypes = [
+            'APP_PAUSED',
+            'APP_STOPPED',
+            'IOS_APP_BACKGROUND',
+            'IOS_APP_HIDDEN',
+            'LOCK_TASK_NOT_ACTIVE',
+            'LOCK_TASK_UNAVAILABLE',
+        ];
 
         $summary = [
             'settings' => $this->serializeAdminSettings($setting),
@@ -418,6 +430,14 @@ class SbtController extends BaseController
             'high_risk_events_today' => SbtSecurityEvent::query()
                 ->whereDate('created_at', now()->toDateString())
                 ->whereIn('severity', ['high', 'critical'])
+                ->count(),
+            'lock_events_today' => SbtSecurityEvent::query()
+                ->whereDate('created_at', now()->toDateString())
+                ->whereIn('event_type', $lockEventTypes)
+                ->count(),
+            'supervisor_unlock_events_today' => SbtSecurityEvent::query()
+                ->whereDate('created_at', now()->toDateString())
+                ->whereIn('event_type', ['SUPERVISOR_UNLOCK_SUCCESS', 'SUPERVISOR_UNLOCK_FAILED'])
                 ->count(),
             'latest_events' => SbtSecurityEvent::query()
                 ->with('session:id,session_code,app_session_id,student_name,device_name,status')
@@ -563,7 +583,8 @@ class SbtController extends BaseController
     private function severityForEventType(string $eventType): string
     {
         return match (strtoupper(trim($eventType))) {
-            'APP_PAUSED', 'APP_STOPPED', 'MULTI_WINDOW', 'PIP_MODE', 'LOCK_TASK_NOT_ACTIVE', 'LOCK_TASK_UNAVAILABLE', 'SUPERVISOR_UNLOCK_FAILED' => 'high',
+            'APP_PAUSED', 'APP_STOPPED', 'IOS_APP_BACKGROUND', 'IOS_APP_HIDDEN', 'MULTI_WINDOW', 'PIP_MODE', 'LOCK_TASK_NOT_ACTIVE', 'LOCK_TASK_UNAVAILABLE', 'SUPERVISOR_UNLOCK_FAILED' => 'high',
+            'IOS_APP_INACTIVE' => 'medium',
             'NAVIGATION_BLOCKED', 'DND_DISABLED', 'OVERLAY_UNSUPPORTED' => 'medium',
             default => 'low',
         };
@@ -584,6 +605,7 @@ class SbtController extends BaseController
             'enabled' => (bool) $setting->enabled,
             'exam_url' => $setting->exam_url,
             'exam_host' => $setting->exam_host,
+            'webview_user_agent' => $setting->webview_user_agent ?: 'SBT-SMANIS/1.0',
             'security_mode' => $setting->security_mode,
             'requires_supervisor_code' => $setting->requiresSupervisorCode(),
             'has_supervisor_code' => $setting->hasSupervisorCode(),
@@ -592,6 +614,7 @@ class SbtController extends BaseController
             'require_dnd' => (bool) $setting->require_dnd,
             'require_screen_pinning' => (bool) $setting->require_screen_pinning,
             'require_overlay_protection' => (bool) $setting->require_overlay_protection,
+            'ios_lock_on_background' => (bool) $setting->ios_lock_on_background,
             'heartbeat_interval_seconds' => (int) $setting->heartbeat_interval_seconds,
             'maintenance_enabled' => (bool) $setting->maintenance_enabled,
             'maintenance_message' => $setting->maintenance_message,

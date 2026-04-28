@@ -13,6 +13,7 @@ class SbtRuntimeConfig {
     required this.enabled,
     required this.examUrl,
     required this.examHost,
+    required this.webviewUserAgent,
     required this.securityMode,
     required this.requiresSupervisorCode,
     required this.hasSupervisorCode,
@@ -20,6 +21,7 @@ class SbtRuntimeConfig {
     required this.requireDnd,
     required this.requireScreenPinning,
     required this.requireOverlayProtection,
+    required this.iosLockOnBackground,
     required this.heartbeatIntervalSeconds,
     required this.maintenanceEnabled,
     required this.configVersion,
@@ -33,6 +35,7 @@ class SbtRuntimeConfig {
       enabled: true,
       examUrl: AppConfig.examUrl,
       examHost: AppConfig.examHost,
+      webviewUserAgent: 'SBT-SMANIS/1.0',
       securityMode: 'warning',
       requiresSupervisorCode: false,
       hasSupervisorCode: false,
@@ -40,6 +43,7 @@ class SbtRuntimeConfig {
       requireDnd: false,
       requireScreenPinning: true,
       requireOverlayProtection: true,
+      iosLockOnBackground: true,
       heartbeatIntervalSeconds: 30,
       maintenanceEnabled: false,
       configVersion: 1,
@@ -50,6 +54,7 @@ class SbtRuntimeConfig {
     final fallback = SbtRuntimeConfig.fallback();
     final examUrl = value['exam_url']?.toString().trim();
     final configuredHost = value['exam_host']?.toString().trim().toLowerCase();
+    final webviewUserAgent = value['webview_user_agent']?.toString().trim();
     final parsedHost = examUrl == null || examUrl.isEmpty
         ? null
         : Uri.tryParse(examUrl)?.host;
@@ -62,6 +67,10 @@ class SbtRuntimeConfig {
                 ? fallback.examHost
                 : parsedHost)
           : configuredHost,
+      webviewUserAgent:
+          webviewUserAgent == null || webviewUserAgent.isEmpty
+              ? fallback.webviewUserAgent
+              : webviewUserAgent,
       securityMode: value['security_mode']?.toString() ?? fallback.securityMode,
       requiresSupervisorCode:
           value['requires_supervisor_code'] == true ||
@@ -74,6 +83,7 @@ class SbtRuntimeConfig {
       requireDnd: value['require_dnd'] == true,
       requireScreenPinning: value['require_screen_pinning'] != false,
       requireOverlayProtection: value['require_overlay_protection'] != false,
+      iosLockOnBackground: value['ios_lock_on_background'] != false,
       heartbeatIntervalSeconds:
           (value['heartbeat_interval_seconds'] as num?)?.toInt() ??
           fallback.heartbeatIntervalSeconds,
@@ -89,6 +99,7 @@ class SbtRuntimeConfig {
   final bool enabled;
   final String examUrl;
   final String examHost;
+  final String webviewUserAgent;
   final String securityMode;
   final bool requiresSupervisorCode;
   final bool hasSupervisorCode;
@@ -96,6 +107,7 @@ class SbtRuntimeConfig {
   final bool requireDnd;
   final bool requireScreenPinning;
   final bool requireOverlayProtection;
+  final bool iosLockOnBackground;
   final int heartbeatIntervalSeconds;
   final bool maintenanceEnabled;
   final String? maintenanceMessage;
@@ -474,6 +486,7 @@ class SbtApiService {
       'app_name': AppConfig.appName,
       'app_version': AppConfig.appVersion,
       'build_number': AppConfig.appBuildNumber,
+      'webview_user_agent': _config.webviewUserAgent,
       'platform': Platform.operatingSystem,
       'platform_version': Platform.operatingSystemVersion,
     };
@@ -485,7 +498,13 @@ class SbtApiService {
 
   String _severityForGuardEvent(String type) {
     return switch (type) {
-      'APP_PAUSED' || 'APP_STOPPED' || 'MULTI_WINDOW' || 'PIP_MODE' => 'high',
+      'APP_PAUSED' ||
+      'APP_STOPPED' ||
+      'IOS_APP_BACKGROUND' ||
+      'IOS_APP_HIDDEN' ||
+      'MULTI_WINDOW' ||
+      'PIP_MODE' => 'high',
+      'IOS_APP_INACTIVE' => 'medium',
       _ => 'medium',
     };
   }

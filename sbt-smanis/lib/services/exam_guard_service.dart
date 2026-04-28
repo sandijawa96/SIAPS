@@ -74,21 +74,21 @@ class ExamGuardService {
   }
 
   Future<void> enableExamGuard({bool requireScreenPinning = true}) async {
-    await _channel.invokeMethod<void>('enableExamGuard', {
+    await _invoke<void>('enableExamGuard', {
       'requireScreenPinning': requireScreenPinning,
     });
   }
 
   Future<void> disableExamGuard() async {
-    await _channel.invokeMethod<void>('disableExamGuard');
+    await _invoke<void>('disableExamGuard');
   }
 
   Future<bool> isInMultiWindowMode() async {
-    return await _channel.invokeMethod<bool>('isInMultiWindowMode') ?? false;
+    return await _invoke<bool>('isInMultiWindowMode') ?? false;
   }
 
   Future<BatteryInfo> getBatteryInfo() async {
-    final result = await _channel.invokeMapMethod<String, dynamic>(
+    final result = await _invokeMap(
       'getBatteryInfo',
     );
 
@@ -99,7 +99,7 @@ class ExamGuardService {
   }
 
   Future<DndStatus> getDoNotDisturbStatus() async {
-    final result = await _channel.invokeMapMethod<String, dynamic>(
+    final result = await _invokeMap(
       'getDoNotDisturbStatus',
     );
 
@@ -112,7 +112,7 @@ class ExamGuardService {
   }
 
   Future<OverlayProtectionStatus> getOverlayProtectionStatus() async {
-    final result = await _channel.invokeMapMethod<String, dynamic>(
+    final result = await _invokeMap(
       'getOverlayProtectionStatus',
     );
 
@@ -123,7 +123,7 @@ class ExamGuardService {
   }
 
   Future<ScreenPinningStatus> getScreenPinningStatus() async {
-    final result = await _channel.invokeMapMethod<String, dynamic>(
+    final result = await _invokeMap(
       'getScreenPinningStatus',
     );
 
@@ -136,7 +136,7 @@ class ExamGuardService {
   }
 
   Future<ScreenPinningStatus> requestScreenPinning() async {
-    final result = await _channel.invokeMapMethod<String, dynamic>(
+    final result = await _invokeMap(
       'requestScreenPinning',
     );
 
@@ -149,10 +149,30 @@ class ExamGuardService {
   }
 
   Future<void> openDoNotDisturbSettings() async {
-    await _channel.invokeMethod<void>('openDoNotDisturbSettings');
+    await _invoke<void>('openDoNotDisturbSettings');
   }
 
   Future<void> openExternalUrl(String url) async {
-    await _channel.invokeMethod<void>('openExternalUrl', {'url': url});
+    await _invoke<void>('openExternalUrl', {'url': url});
+  }
+
+  Future<T?> _invoke<T>(String method, [Object? arguments]) async {
+    try {
+      return await _channel.invokeMethod<T>(method, arguments);
+    } on MissingPluginException {
+      return null;
+    } on PlatformException {
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>?> _invokeMap(String method) async {
+    try {
+      return await _channel.invokeMapMethod<String, dynamic>(method);
+    } on MissingPluginException {
+      return null;
+    } on PlatformException {
+      return null;
+    }
   }
 }

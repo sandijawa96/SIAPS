@@ -15,6 +15,7 @@ import { formatServerDateTime } from '../services/serverClock';
 const createForm = () => ({
   enabled: true,
   exam_url: 'https://res.sman1sumbercirebon.sch.id',
+  webview_user_agent: 'SBT-SMANIS/1.0',
   security_mode: 'warning',
   supervisor_code: '',
   clear_supervisor_code: false,
@@ -22,6 +23,7 @@ const createForm = () => ({
   require_dnd: false,
   require_screen_pinning: true,
   require_overlay_protection: true,
+  ios_lock_on_background: true,
   minimum_battery_level: 20,
   heartbeat_interval_seconds: 30,
   maintenance_enabled: false,
@@ -49,13 +51,6 @@ const securityModes = [
   },
 ];
 
-const severityClass = {
-  low: 'bg-slate-100 text-slate-700',
-  medium: 'bg-amber-100 text-amber-800',
-  high: 'bg-rose-100 text-rose-800',
-  critical: 'bg-red-200 text-red-900',
-};
-
 const formatDate = (value) =>
   formatServerDateTime(value, 'id-ID', { dateStyle: 'medium', timeStyle: 'short' }) || '-';
 
@@ -73,11 +68,10 @@ const normalizeSettings = (settings = {}) => ({
   supervisor_code: '',
   clear_supervisor_code: false,
   minimum_app_version: settings.minimum_app_version || '',
+  webview_user_agent: settings.webview_user_agent || 'SBT-SMANIS/1.0',
   maintenance_message: settings.maintenance_message || '',
   announcement: settings.announcement || '',
 });
-
-const screenPinningEventTypes = new Set(['LOCK_TASK_NOT_ACTIVE', 'LOCK_TASK_UNAVAILABLE']);
 
 const releaseStatusLabel = (release) => {
   if (!release) return 'Belum ada release SBT';
@@ -93,9 +87,7 @@ const SbtManagement = () => {
   const [form, setForm] = useState(createForm);
   const [summary, setSummary] = useState(null);
   const [sessions, setSessions] = useState([]);
-  const [events, setEvents] = useState([]);
   const [releases, setReleases] = useState([]);
-  const [eventFilter, setEventFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -110,28 +102,6 @@ const SbtManagement = () => {
       .filter((release) => release.app_key === 'sbt-smanis' && release.platform === 'android')
       .sort((left, right) => Number(right.build_number || 0) - Number(left.build_number || 0))[0] || null;
   }, [releases]);
-
-  const screenPinningEvents = useMemo(
-    () => events.filter((event) => screenPinningEventTypes.has(event.event_type)),
-    [events]
-  );
-
-  const highRiskEvents = useMemo(
-    () => events.filter((event) => ['high', 'critical'].includes(event.severity)),
-    [events]
-  );
-
-  const filteredEvents = useMemo(() => {
-    if (eventFilter === 'screen-pinning') {
-      return screenPinningEvents;
-    }
-
-    if (eventFilter === 'high-risk') {
-      return highRiskEvents;
-    }
-
-    return events;
-  }, [eventFilter, events, highRiskEvents, screenPinningEvents]);
 
   const policyItems = useMemo(() => [
     {
@@ -154,25 +124,28 @@ const SbtManagement = () => {
       value: form.require_overlay_protection ? 'Aktif' : 'Opsional',
       tone: form.require_overlay_protection ? 'emerald' : 'slate',
     },
-  ], [activeMode.label, form.require_dnd, form.require_overlay_protection, form.require_screen_pinning, form.security_mode]);
+    {
+      label: 'iPhone keluar app',
+      value: form.ios_lock_on_background ? 'Kunci sesi' : 'Tidak aktif',
+      tone: form.ios_lock_on_background ? 'emerald' : 'rose',
+    },
+  ], [activeMode.label, form.ios_lock_on_background, form.require_dnd, form.require_overlay_protection, form.require_screen_pinning, form.security_mode]);
 
   const loadData = async () => {
     setLoading(true);
     setError('');
 
     try {
-      const [settingsResponse, summaryResponse, sessionsResponse, eventsResponse, releasesResponse] = await Promise.all([
+      const [settingsResponse, summaryResponse, sessionsResponse, releasesResponse] = await Promise.all([
         sbtAPI.getSettings(),
         sbtAPI.getSummary(),
         sbtAPI.getSessions({ per_page: 8 }),
-        sbtAPI.getEvents({ per_page: 12 }),
         mobileReleasesAPI.getAll({ app_key: 'sbt-smanis', platform: 'android' }),
       ]);
 
       setForm(normalizeSettings(settingsResponse?.data?.data || {}));
       setSummary(summaryResponse?.data?.data || null);
       setSessions(sessionsResponse?.data?.data?.items || []);
-      setEvents(eventsResponse?.data?.data?.items || []);
       setReleases(releasesResponse?.data?.data || []);
     } catch (loadError) {
       setError(loadError?.response?.data?.message || 'Data SBT belum bisa dimuat.');
@@ -200,6 +173,7 @@ const SbtManagement = () => {
     const payload = {
       enabled: Boolean(form.enabled),
       exam_url: form.exam_url.trim(),
+      webview_user_agent: form.webview_user_agent.trim() || 'SBT-SMANIS/1.0',
       security_mode: form.security_mode,
       supervisor_code: form.supervisor_code.trim() || null,
       clear_supervisor_code: Boolean(form.clear_supervisor_code),
@@ -207,6 +181,7 @@ const SbtManagement = () => {
       require_dnd: Boolean(form.require_dnd),
       require_screen_pinning: Boolean(form.require_screen_pinning),
       require_overlay_protection: Boolean(form.require_overlay_protection),
+      ios_lock_on_background: Boolean(form.ios_lock_on_background),
       minimum_battery_level: Number(form.minimum_battery_level),
       heartbeat_interval_seconds: Number(form.heartbeat_interval_seconds),
       maintenance_enabled: Boolean(form.maintenance_enabled),
@@ -285,8 +260,8 @@ const SbtManagement = () => {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <SummaryCard icon={Activity} label="Sesi Aktif" value={summary?.active_sessions || 0} tone="blue" />
         <SummaryCard icon={Clock} label="Sesi Hari Ini" value={summary?.sessions_today || 0} tone="emerald" />
-        <SummaryCard icon={Shield} label="Event Hari Ini" value={summary?.events_today || 0} tone="amber" />
-        <SummaryCard icon={AlertTriangle} label="Risiko Tinggi" value={summary?.high_risk_events_today || 0} tone="rose" />
+        <SummaryCard icon={Shield} label="Kunci Hari Ini" value={summary?.lock_events_today || 0} tone="amber" />
+        <SummaryCard icon={AlertTriangle} label="Buka Kunci" value={summary?.supervisor_unlock_events_today || 0} tone="rose" />
       </div>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
@@ -317,15 +292,9 @@ const SbtManagement = () => {
               <PolicyRow key={item.label} label={item.label} value={item.value} tone={item.tone} />
             ))}
           </div>
-          {screenPinningEvents.length > 0 ? (
-            <p className="mt-3 rounded-lg border border-rose-200 bg-rose-50 p-3 text-sm text-rose-800">
-              Ada {screenPinningEvents.length} event screen pinning pada log terbaru. Cek daftar pelanggaran di bawah.
-            </p>
-          ) : (
-            <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
-              Belum ada event screen pinning pada log terbaru.
-            </p>
-          )}
+          <p className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
+            SBT tidak menampilkan daftar pelanggaran siswa di halaman ini. Saat siswa keluar aplikasi, sesi dikunci di perangkat dan pengawas membuka dengan kode.
+          </p>
         </InfoPanel>
       </div>
 
@@ -369,6 +338,21 @@ const SbtManagement = () => {
                 placeholder="Opsional, contoh 1.0.0"
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
               />
+            </Field>
+
+            <Field label="User-Agent WebView CBT">
+              <input
+                type="text"
+                name="webview_user_agent"
+                value={form.webview_user_agent}
+                onChange={handleChange}
+                placeholder="SBT-SMANIS/1.0"
+                maxLength={255}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+              />
+              <p className="mt-2 text-xs leading-5 text-slate-500">
+                Agent ini dipakai WebView saat membuka CBT, sehingga bisa dicek oleh server ujian.
+              </p>
             </Field>
 
             <Field label="Mode Keamanan">
@@ -438,7 +422,7 @@ const SbtManagement = () => {
             </Field>
           </div>
 
-          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-4">
             <CheckboxField name="require_dnd" checked={form.require_dnd} onChange={handleChange} label="Wajib DND" />
             <CheckboxField
               name="require_screen_pinning"
@@ -451,6 +435,12 @@ const SbtManagement = () => {
               checked={form.require_overlay_protection}
               onChange={handleChange}
               label="Blok Overlay"
+            />
+            <CheckboxField
+              name="ios_lock_on_background"
+              checked={form.ios_lock_on_background}
+              onChange={handleChange}
+              label="iPhone Kunci Saat Keluar"
             />
           </div>
 
@@ -513,6 +503,13 @@ const SbtManagement = () => {
           <InfoPanel title="CBT">
             <p className="break-all text-sm font-medium text-slate-900">{form.exam_url}</p>
             <p className="mt-2 text-sm text-slate-600">Host diizinkan: {form.exam_host || '-'}</p>
+            <p className="mt-2 break-all text-sm text-slate-600">Agent: {form.webview_user_agent || 'SBT-SMANIS/1.0'}</p>
+          </InfoPanel>
+
+          <InfoPanel title="iPhone">
+            <p className="text-sm text-slate-600">
+              iOS memakai deteksi background. Jika siswa keluar aplikasi, layar ujian terkunci saat kembali dan harus dibuka pengawas.
+            </p>
           </InfoPanel>
         </div>
       </form>
@@ -526,13 +523,12 @@ const SbtManagement = () => {
                   <th className="py-2 pr-3">Perangkat</th>
                   <th className="py-2 pr-3">Status</th>
                   <th className="py-2 pr-3">Heartbeat</th>
-                  <th className="py-2 pr-3">Event</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {sessions.length === 0 ? (
                   <tr>
-                    <td colSpan="4" className="py-4 text-slate-500">
+                    <td colSpan="3" className="py-4 text-slate-500">
                       Belum ada sesi SBT.
                     </td>
                   </tr>
@@ -549,7 +545,6 @@ const SbtManagement = () => {
                         </span>
                       </td>
                       <td className="py-3 pr-3 text-slate-600">{formatDate(session.last_heartbeat_at)}</td>
-                      <td className="py-3 pr-3 text-slate-600">{session.events_count || 0}</td>
                     </tr>
                   ))
                 )}
@@ -558,37 +553,17 @@ const SbtManagement = () => {
           </div>
         </DataPanel>
 
-        <DataPanel title="Log Pelanggaran">
-          <div className="mb-4 flex flex-wrap gap-2">
-            <FilterButton active={eventFilter === 'all'} onClick={() => setEventFilter('all')}>
-              Semua
-            </FilterButton>
-            <FilterButton active={eventFilter === 'high-risk'} onClick={() => setEventFilter('high-risk')}>
-              Risiko Tinggi
-            </FilterButton>
-            <FilterButton active={eventFilter === 'screen-pinning'} onClick={() => setEventFilter('screen-pinning')}>
-              Screen Pinning
-            </FilterButton>
-          </div>
-          <div className="space-y-3">
-            {filteredEvents.length === 0 ? (
-              <p className="text-sm text-slate-500">Belum ada pelanggaran fokus.</p>
-            ) : (
-              filteredEvents.map((event) => (
-                <div key={event.id} className="rounded-lg border border-slate-200 p-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="font-semibold text-slate-900">{event.event_type}</div>
-                    <span className={`rounded-full px-2 py-1 text-xs font-medium ${severityClass[event.severity] || severityClass.medium}`}>
-                      {event.severity}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-slate-600">{event.message || '-'}</p>
-                  <p className="mt-2 text-xs text-slate-500">
-                    {formatDate(event.occurred_at)} | {event.session?.device_name || event.device_id || event.app_session_id || '-'}
-                  </p>
-                </div>
-              ))
-            )}
+        <DataPanel title="Aturan Kunci Sesi">
+          <div className="space-y-3 text-sm text-slate-600">
+            <p>
+              Android memakai screen pinning dan deteksi keluar aplikasi. iPhone memakai deteksi background karena aplikasi biasa tidak bisa memaksa single-app mode tanpa entitlement Apple.
+            </p>
+            <p>
+              Saat keluar aplikasi terdeteksi, SBT mengunci layar ujian pada perangkat siswa. SIAPS hanya menampilkan jumlah kunci sesi dan aktivitas buka kunci, bukan daftar pelanggaran siswa.
+            </p>
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-800">
+              Agar kunci benar-benar menahan siswa, gunakan mode keamanan <span className="font-semibold">Kode Pengawas</span> atau <span className="font-semibold">Kunci Ketat</span>.
+            </div>
           </div>
         </DataPanel>
       </div>
@@ -643,20 +618,6 @@ const StatusBadge = ({ tone = 'slate', children }) => {
     </span>
   );
 };
-
-const FilterButton = ({ active, onClick, children }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
-      active
-        ? 'border-blue-700 bg-blue-700 text-white'
-        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
-    }`}
-  >
-    {children}
-  </button>
-);
 
 const Field = ({ label, children }) => (
   <label className="block">

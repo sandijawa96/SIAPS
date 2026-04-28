@@ -42,7 +42,9 @@ class SbtEndpointTest extends TestCase
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.exam_url', 'https://res.sman1sumbercirebon.sch.id')
             ->assertJsonPath('data.exam_host', 'res.sman1sumbercirebon.sch.id')
-            ->assertJsonPath('data.security_mode', 'warning');
+            ->assertJsonPath('data.webview_user_agent', 'SBT-SMANIS/1.0')
+            ->assertJsonPath('data.security_mode', 'warning')
+            ->assertJsonPath('data.ios_lock_on_background', true);
 
         $this->assertDatabaseHas('sbt_settings', [
             'id' => 1,
@@ -142,6 +144,7 @@ class SbtEndpointTest extends TestCase
         $payload = [
             'enabled' => true,
             'exam_url' => 'https://res.sman1sumbercirebon.sch.id',
+            'webview_user_agent' => 'SBT-SMANIS/1.0 Ujian',
             'security_mode' => 'supervisor_code',
             'supervisor_code' => '2468',
             'clear_supervisor_code' => false,
@@ -149,6 +152,7 @@ class SbtEndpointTest extends TestCase
             'require_dnd' => false,
             'require_screen_pinning' => true,
             'require_overlay_protection' => true,
+            'ios_lock_on_background' => true,
             'minimum_battery_level' => 20,
             'heartbeat_interval_seconds' => 30,
             'maintenance_enabled' => false,
@@ -161,6 +165,7 @@ class SbtEndpointTest extends TestCase
             ->assertStatus(200)
             ->assertJsonPath('success', true)
             ->assertJsonPath('data.security_mode', 'supervisor_code')
+            ->assertJsonPath('data.webview_user_agent', 'SBT-SMANIS/1.0 Ujian')
             ->assertJsonPath('data.has_supervisor_code', true);
 
         $this->assertTrue(SbtSetting::current()->requiresSupervisorCode());

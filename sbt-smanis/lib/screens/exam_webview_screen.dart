@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -15,7 +16,8 @@ class ExamWebViewScreen extends StatefulWidget {
   State<ExamWebViewScreen> createState() => _ExamWebViewScreenState();
 }
 
-class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
+class _ExamWebViewScreenState extends State<ExamWebViewScreen>
+    with WidgetsBindingObserver {
   final _sbt = SbtApiService.instance;
   late final WebViewController _controller;
   StreamSubscription<GuardEvent>? _guardSubscription;
@@ -26,10 +28,14 @@ class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
   GuardEvent? _lastGuardEvent;
   GuardEvent? _guardLockEvent;
   DateTime? _lastScreenPinningWarningAt;
+  DateTime? _lastIosLifecycleEventAt;
+  var _examGuardEnabled = false;
+  var _finishingExam = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller = _buildController();
     _guardSubscription = ExamGuardService.instance.events.listen(_onGuardEvent);
     unawaited(_prepareExam());
@@ -39,9 +45,11 @@ class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
     await _sbt.loadConfig();
     if (!mounted) return;
 
+    await _controller.setUserAgent(_sbt.config.webviewUserAgent);
     await ExamGuardService.instance.enableExamGuard(
-      requireScreenPinning: _sbt.config.requireScreenPinning,
+      requireScreenPinning: Platform.isAndroid && _sbt.config.requireScreenPinning,
     );
+    _examGuardEnabled = true;
     await _sbt.startSession();
     _startHeartbeat();
     await _controller.loadRequest(Uri.parse(_sbt.config.examUrl));
@@ -51,7 +59,9 @@ class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
     return WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(Colors.white)
-      ..setUserAgent('SBT-SMANIS/1.0 Android WebView')
+      ..setUserAgent(
+        Platform.isIOS ? 'SBT-SMANIS/1.0 iOS WebView' : 'SBT-SMANIS/1.0 Android WebView',
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (progress) {
@@ -157,6 +167,8 @@ class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
   bool _shouldLockExam(String type) {
     return type == 'APP_PAUSED' ||
         type == 'APP_STOPPED' ||
+        type == 'IOS_APP_BACKGROUND' ||
+        type == 'IOS_APP_HIDDEN' ||
         type == 'MULTI_WINDOW' ||
         type == 'PIP_MODE' ||
         type == 'LOCK_TASK_NOT_ACTIVE' ||
@@ -167,9 +179,10 @@ class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
     setState(() => _guardLockEvent = null);
     unawaited(
       ExamGuardService.instance.enableExamGuard(
-        requireScreenPinning: _sbt.config.requireScreenPinning,
+        requireScreenPinning: Platform.isAndroid && _sbt.config.requireScreenPinning,
       ),
     );
+    _examGuardEnabled = true;
   }
 
   Future<SbtUnlockResult> _validateSupervisorCode(String code) {
@@ -203,6 +216,7 @@ class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
   }
 
   Future<void> _verifyScreenPinningDuringExam() async {
+    if (!Platform.isAndroid) return;
     if (!_sbt.config.requireScreenPinning) return;
 
     final status = await ExamGuardService.instance.getScreenPinningStatus();
@@ -250,8 +264,66 @@ class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
     );
 
     if (exit != true || !mounted) return;
+    _finishingExam = true;
+    _examGuardEnabled = false;
     await ExamGuardService.instance.disableExamGuard();
     if (mounted) Navigator.of(context).pop();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (!_shouldWatchIosLifecycle()) return;
+
+    if (state == AppLifecycleState.inactive) {
+      _sendIosLifecycleEvent(
+        type: 'IOS_APP_INACTIVE',
+        message: 'Aplikasi ujian kehilangan fokus sementara.',
+        lock: false,
+      );
+      return;
+    }
+
+    if (state == AppLifecycleState.hidden || state == AppLifecycleState.paused) {
+      _sendIosLifecycleEvent(
+        type: state == AppLifecycleState.hidden
+            ? 'IOS_APP_HIDDEN'
+            : 'IOS_APP_BACKGROUND',
+        message: 'Aplikasi ujian keluar dari tampilan utama iOS.',
+        lock: true,
+      );
+    }
+  }
+
+  bool _shouldWatchIosLifecycle() {
+    return Platform.isIOS &&
+        _examGuardEnabled &&
+        !_finishingExam &&
+        _sbt.config.iosLockOnBackground;
+  }
+
+  void _sendIosLifecycleEvent({
+    required String type,
+    required String message,
+    required bool lock,
+  }) {
+    final now = DateTime.now();
+    final lastEvent = _lastIosLifecycleEventAt;
+    if (lastEvent != null && now.difference(lastEvent).inSeconds < 2) {
+      return;
+    }
+    _lastIosLifecycleEventAt = now;
+
+    final event = GuardEvent(type: type, message: message, occurredAt: now);
+    if (lock) {
+      _onGuardEvent(event);
+      return;
+    }
+
+    unawaited(_sbt.reportGuardEvent(event));
+    if (mounted) {
+      setState(() => _lastGuardEvent = event);
+    }
   }
 
   Future<void> _reload() async {
@@ -261,6 +333,8 @@ class _ExamWebViewScreenState extends State<ExamWebViewScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _examGuardEnabled = false;
     _heartbeatTimer?.cancel();
     _guardSubscription?.cancel();
     unawaited(_sbt.finishSession(reason: 'dispose'));

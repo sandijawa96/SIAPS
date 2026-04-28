@@ -15,6 +15,7 @@ class MobileRelease extends Model
         'app_name',
         'app_description',
         'target_audience',
+        'bundle_identifier',
         'platform',
         'release_channel',
         'public_version',

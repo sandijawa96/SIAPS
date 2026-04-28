@@ -54,6 +54,11 @@ const platformLabelFallback = {
   ios: 'iPhone / iOS',
 };
 
+const platformTabs = [
+  { value: 'android', label: 'Android', description: 'APK untuk perangkat Android' },
+  { value: 'ios', label: 'iPhone', description: 'IPA untuk perangkat iOS' },
+];
+
 const audienceBadgeStyles = {
   all: 'bg-emerald-100 text-emerald-800',
   siswa: 'bg-sky-100 text-sky-800',
@@ -83,6 +88,7 @@ const MobileDownloadCenter = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [downloadingId, setDownloadingId] = useState(null);
+  const [activePlatform, setActivePlatform] = useState('android');
 
   const currentAudience = useMemo(() => resolveAudienceFromRoles(roles), [roles]);
   const currentAudienceLabel = currentAudience === 'siswa' ? 'Siswa' : 'Pegawai Sekolah';
@@ -157,17 +163,40 @@ const MobileDownloadCenter = () => {
       .sort((left, right) => String(left.app_name).localeCompare(String(right.app_name)));
   }, [releases]);
 
+  const platformCounts = useMemo(() => {
+    return groupedApps.reduce((counts, app) => {
+      app.items.forEach((release) => {
+        counts[release.platform] = (counts[release.platform] || 0) + 1;
+      });
+
+      return counts;
+    }, {});
+  }, [groupedApps]);
+
+  const visibleApps = useMemo(() => (
+    groupedApps
+      .map((app) => ({
+        ...app,
+        items: app.items.filter((release) => release.platform === activePlatform),
+      }))
+      .filter((app) => app.items.length > 0)
+  ), [activePlatform, groupedApps]);
+
+  const activePlatformLabel = platformTabs.find((tab) => tab.value === activePlatform)?.label || activePlatform;
+
   const handleDownload = async (release) => {
     if (!release) {
       return;
     }
 
-    if (release.download_kind === 'external_url' && release.download_url) {
+    const isIos = release.platform === 'ios';
+
+    if (!isIos && release.download_kind === 'external_url' && release.download_url) {
       window.open(release.download_url, '_blank', 'noopener,noreferrer');
       return;
     }
 
-    if (release.download_kind !== 'managed_asset') {
+    if (!isIos && release.download_kind !== 'managed_asset') {
       enqueueSnackbar('Unduhan belum tersedia untuk release ini.', { variant: 'warning' });
       return;
     }
@@ -182,7 +211,12 @@ const MobileDownloadCenter = () => {
       }
 
       openDirectDownload(downloadUrl);
-      enqueueSnackbar(`Unduhan ${release.app_name || release.app_label} disiapkan. Jika belum muncul, cek izin download browser.`, { variant: 'success' });
+      enqueueSnackbar(
+        isIos
+          ? `Installer iPhone ${release.app_name || release.app_label} dibuka. Gunakan Safari bila browser tidak merespons.`
+          : `Unduhan ${release.app_name || release.app_label} disiapkan. Jika belum muncul, cek izin download browser.`,
+        { variant: 'success' }
+      );
     } catch (downloadError) {
       enqueueSnackbar(
         downloadError?.response?.data?.message || downloadError?.message || 'Gagal mengunduh aplikasi internal.',
@@ -223,8 +257,8 @@ const MobileDownloadCenter = () => {
                   <p className="mt-2 text-sm font-semibold text-slate-900">{currentAudienceLabel}</p>
                 </div>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Aplikasi Tersedia</p>
-                  <p className="mt-2 text-sm font-semibold text-slate-900">{groupedApps.length}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Aplikasi Tab Ini</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{visibleApps.length}</p>
                 </div>
               </div>
             </div>
@@ -252,6 +286,36 @@ const MobileDownloadCenter = () => {
         </section>
 
         <section className="mt-8">
+          <div className="mb-5 rounded-[1.5rem] border border-slate-200 bg-white p-2 shadow-sm">
+            <div className="grid gap-2 sm:grid-cols-2">
+              {platformTabs.map((tab) => {
+                const isActive = activePlatform === tab.value;
+                return (
+                  <button
+                    key={tab.value}
+                    type="button"
+                    onClick={() => setActivePlatform(tab.value)}
+                    className={`rounded-[1.25rem] px-4 py-3 text-left transition ${
+                      isActive
+                        ? 'bg-slate-950 text-white shadow'
+                        : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span className="flex items-center justify-between gap-3">
+                      <span className="text-sm font-semibold">{tab.label}</span>
+                      <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${isActive ? 'bg-white/15 text-white' : 'bg-white text-slate-600 ring-1 ring-slate-200'}`}>
+                        {platformCounts[tab.value] || 0}
+                      </span>
+                    </span>
+                    <span className={`mt-1 block text-xs ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>
+                      {tab.description}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {loading ? (
             <div className="rounded-[2rem] border border-slate-200 bg-white p-10 text-center text-sm text-slate-500 shadow-sm">
               Memuat katalog aplikasi internal...
@@ -270,9 +334,13 @@ const MobileDownloadCenter = () => {
             <div className="rounded-[2rem] border border-slate-200 bg-white p-10 text-center text-sm text-slate-500 shadow-sm">
               Belum ada aplikasi internal yang tersedia untuk akun ini.
             </div>
+          ) : visibleApps.length === 0 ? (
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-10 text-center text-sm text-slate-500 shadow-sm">
+              Belum ada aplikasi {activePlatformLabel} yang tersedia untuk akun ini.
+            </div>
           ) : (
             <div className="space-y-6">
-              {groupedApps.map((app) => (
+              {visibleApps.map((app) => (
                 <section key={app.app_key} className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-lg">
                   <div className="border-b border-slate-100 bg-[linear-gradient(135deg,_#0f172a,_#164e63)] px-6 py-6 text-white">
                     <div className="flex flex-wrap items-center gap-3">
@@ -295,6 +363,7 @@ const MobileDownloadCenter = () => {
                   <div className="grid gap-5 px-6 py-6 lg:grid-cols-2">
                     {app.items.map((release) => {
                       const fileSize = formatFileSize(release.file_size_bytes);
+                      const isIos = release.platform === 'ios';
                       const isManagedAsset = release.download_kind === 'managed_asset';
                       const isDownloading = downloadingId === release.id;
 
@@ -363,10 +432,12 @@ const MobileDownloadCenter = () => {
                             >
                               {isManagedAsset ? <Download size={16} /> : <ExternalLink size={16} />}
                               {isDownloading
-                                ? 'Menyiapkan Unduhan...'
-                                : isManagedAsset
-                                  ? 'Unduh Aplikasi'
-                                  : 'Buka Jalur Instalasi'}
+                                ? isIos ? 'Menyiapkan Installer...' : 'Menyiapkan Unduhan...'
+                                : isIos
+                                  ? 'Pasang di iPhone'
+                                  : isManagedAsset
+                                    ? 'Unduh Aplikasi'
+                                    : 'Buka Jalur Instalasi'}
                             </button>
                           ) : (
                             <div className="mt-5 rounded-2xl border border-dashed border-slate-300 px-4 py-3 text-sm text-slate-500">

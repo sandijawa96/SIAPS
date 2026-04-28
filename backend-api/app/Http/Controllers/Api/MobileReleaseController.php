@@ -230,15 +230,32 @@ class MobileReleaseController extends Controller
         }
 
         $expiresAt = now()->addMinutes(10);
+        $assetDownloadUrl = URL::temporarySignedRoute(
+            'mobile-releases.signed-download',
+            $expiresAt,
+            ['mobileRelease' => $mobileRelease->id]
+        );
+        $downloadUrl = $assetDownloadUrl;
+        $iosManifestUrl = null;
+        $iosInstallUrl = null;
+
+        if (strtolower((string) $mobileRelease->platform) === 'ios') {
+            $iosManifestUrl = URL::temporarySignedRoute(
+                'mobile-releases.ios-manifest',
+                $expiresAt,
+                ['mobileRelease' => $mobileRelease->id]
+            );
+            $iosInstallUrl = $this->buildItmsInstallUrl($iosManifestUrl);
+            $downloadUrl = $iosInstallUrl;
+        }
 
         return response()->json([
             'success' => true,
             'data' => [
-                'download_url' => URL::temporarySignedRoute(
-                    'mobile-releases.signed-download',
-                    $expiresAt,
-                    ['mobileRelease' => $mobileRelease->id]
-                ),
+                'download_url' => $downloadUrl,
+                'asset_download_url' => $assetDownloadUrl,
+                'ios_manifest_url' => $iosManifestUrl,
+                'ios_install_url' => $iosInstallUrl,
                 'expires_at' => $expiresAt->toISOString(),
                 'filename' => $this->resolveDownloadName($mobileRelease),
                 'file_size_bytes' => $mobileRelease->file_size_bytes,
@@ -251,6 +268,45 @@ class MobileReleaseController extends Controller
         return $this->streamReleaseDownload($mobileRelease);
     }
 
+    public function iosManifest(Request $request, MobileRelease $mobileRelease)
+    {
+        if (strtolower((string) $mobileRelease->platform) !== 'ios') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Manifest OTA hanya tersedia untuk release iOS.',
+            ], 422);
+        }
+
+        $bundleIdentifier = $this->mobileReleaseService->resolveBundleIdentifier($mobileRelease);
+        if (!is_string($bundleIdentifier) || trim($bundleIdentifier) === '') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bundle identifier iOS belum diisi untuk release ini.',
+            ], 422);
+        }
+
+        $packageUrl = $this->resolveIosPackageUrl($mobileRelease);
+        if (!is_string($packageUrl) || trim($packageUrl) === '') {
+            return response()->json([
+                'success' => false,
+                'message' => 'File IPA belum tersedia untuk release ini.',
+            ], 404);
+        }
+
+        $manifest = $this->buildIosManifest(
+            $packageUrl,
+            $bundleIdentifier,
+            (string) $mobileRelease->public_version,
+            (string) ($mobileRelease->app_label ?: $mobileRelease->app_name ?: 'SIAPS')
+        );
+
+        return response($manifest, 200, [
+            'Content-Type' => 'text/xml; charset=UTF-8',
+            'Cache-Control' => 'no-store, private',
+            'X-Content-Type-Options' => 'nosniff',
+        ]);
+    }
+
     private function makeWriteValidator(Request $request)
     {
         $input = $request->all();
@@ -261,6 +317,7 @@ class MobileReleaseController extends Controller
             'app_name' => 'nullable|string|max:120',
             'app_description' => 'nullable|string|max:5000',
             'target_audience' => 'nullable|in:all,siswa,staff',
+            'bundle_identifier' => ['nullable', 'string', 'max:255', 'regex:/^[A-Za-z0-9][A-Za-z0-9.-]*[A-Za-z0-9]$/'],
             'platform' => 'required|in:android,ios',
             'release_channel' => 'nullable|string|max:30',
             'public_version' => 'required|string|max:50',
@@ -404,5 +461,78 @@ class MobileReleaseController extends Controller
             'ipa' => 'application/octet-stream',
             default => 'application/octet-stream',
         };
+    }
+
+    private function resolveIosPackageUrl(MobileRelease $mobileRelease): ?string
+    {
+        if (is_string($mobileRelease->download_url) && trim($mobileRelease->download_url) !== '') {
+            return trim($mobileRelease->download_url);
+        }
+
+        if (is_string($mobileRelease->asset_path) && trim($mobileRelease->asset_path) !== '') {
+            return URL::temporarySignedRoute(
+                'mobile-releases.signed-download',
+                now()->addHours(12),
+                ['mobileRelease' => $mobileRelease->id]
+            );
+        }
+
+        return null;
+    }
+
+    private function buildItmsInstallUrl(string $manifestUrl): string
+    {
+        return 'itms-services://?action=download-manifest&url=' . rawurlencode($manifestUrl);
+    }
+
+    private function buildIosManifest(
+        string $packageUrl,
+        string $bundleIdentifier,
+        string $bundleVersion,
+        string $title
+    ): string {
+        $packageUrl = $this->xml($packageUrl);
+        $bundleIdentifier = $this->xml($bundleIdentifier);
+        $bundleVersion = $this->xml($bundleVersion);
+        $title = $this->xml($title);
+
+        return <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>items</key>
+    <array>
+        <dict>
+            <key>assets</key>
+            <array>
+                <dict>
+                    <key>kind</key>
+                    <string>software-package</string>
+                    <key>url</key>
+                    <string>{$packageUrl}</string>
+                </dict>
+            </array>
+            <key>metadata</key>
+            <dict>
+                <key>bundle-identifier</key>
+                <string>{$bundleIdentifier}</string>
+                <key>bundle-version</key>
+                <string>{$bundleVersion}</string>
+                <key>kind</key>
+                <string>software</string>
+                <key>title</key>
+                <string>{$title}</string>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>
+XML;
+    }
+
+    private function xml(string $value): string
+    {
+        return htmlspecialchars($value, ENT_XML1 | ENT_COMPAT, 'UTF-8');
     }
 }
